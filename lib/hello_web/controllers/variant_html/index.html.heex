@@ -1,0 +1,21 @@
+<.header>
+</.header>
+
+<div class="container grid grid-cols-7">
+  <span class="col-span-4 font-bold inline-block text-lg">
+    Variant Search Results : <%= length(@variants) %>
+  </span>
+  <span class="col-span-3">
+    <%= form_for @conn, ~p"/variants", [method: :get, autocomplete: "off"], fn f -> %>
+      <%= search_input f, :query, class: "leading-3 text-sm block border rounded w-full md:text-left mb-1 md:mb-0 pr-4" %>
+      <%= submit "", class: "text-sm" %>
+    <% end %>
+  </span>
+</div>
+
+<.table id="variants" rows={@variants}>
+  <:col :let={variant} label="Name"><%= variant.name %></:col>
+  <:col :let={variant} label="Price"><%= variant.price %></:col>
+  <:col :let={variant} label="Tags"><%= variant.tags %></:col>
+  <:col :let={variant} label="Product"><%= variant.product_id %></:col>
+</.table>
