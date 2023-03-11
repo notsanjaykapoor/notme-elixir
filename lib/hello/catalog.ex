@@ -6,6 +6,8 @@ defmodule Hello.Catalog do
   import Ecto.Query, warn: false
   alias Hello.Repo
   alias Hello.Catalog.Product
+  alias Hello.Catalog.Search
+  alias Hello.Catalog.Variant
 
   @doc """
   Returns the list of products.
@@ -136,12 +138,9 @@ defmodule Hello.Catalog do
 
   """
   def variants_list(params \\ %{}) do
-    search_query = get_in(params, ["query"])
+    search_query = get_in(params, ["query"]) || ""
 
-    variants_search(search_query)
-    # Variant
-    # |> Variant.search(search_query)
-    # |> Repo.all()
+    Search.search(search_query)
   end
 
   @doc """
@@ -230,45 +229,4 @@ defmodule Hello.Catalog do
   def variant_change(%Variant{} = variant, attrs \\ %{}) do
     Variant.changeset(variant, attrs)
   end
-
-  def variants_search(search_query) do
-    {:ok, clauses} = variant_search_clauses(search_query)
-
-    variant_query_base()
-    |> variant_query_build(clauses)
-    |> Repo.all
-  end
-
-  def variant_search_clauses(search_query) do
-    clauses = Regex.scan(~r/([a-z]+):([a-z-0-9]+)/, search_query)
-
-    if length(clauses) == 0 do
-      {:ok, [["name:#{search_query}", "name", search_query]]}
-    else
-      {:ok, clauses}
-    end
-  end
-
-
-  def variant_query_base() do
-    from o in Variant
-  end
-
-  def variant_query_build(query, clauses) do
-    Enum.reduce(clauses, query, &variant_query_compose/2)
-  end
-
-  def variant_query_compose([_, "name", value], query) do
-    name_normalized = String.replace(value, "-", " ")
-    where(query, [o], ilike(o.name, ^"%#{name_normalized}%"))
-  end
-
-  def variant_query_compose([_, "price_gte", value], query) do
-    where(query, [o], o.price >= ^value)
-  end
-
-  def variant_query_compose([_, "tags", value], query) do
-    where(query, [o], ^value in o.tags)
-  end
-
 end

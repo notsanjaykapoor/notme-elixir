@@ -1,7 +1,6 @@
 defmodule Hello.Catalog.Variant do
   use Ecto.Schema
   import Ecto.Changeset
-  import Ecto.Query
 
   schema "variants" do
     field :name, :string

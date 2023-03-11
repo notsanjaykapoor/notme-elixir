@@ -23,7 +23,7 @@ defmodule Hello.UsersTest do
     test "create_user/1 with valid data creates a user" do
       valid_attrs = %{email: "user-1@gmail.com", state: "active", user_id: "user-1"}
 
-      assert {:ok, %User{} = user} = Users.create_user(valid_attrs)
+      assert {:ok, %User{} = _user} = Users.create_user(valid_attrs)
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -34,7 +34,7 @@ defmodule Hello.UsersTest do
       user = user_fixture()
       update_attrs = %{}
 
-      assert {:ok, %User{} = user} = Users.update_user(user, update_attrs)
+      assert {:ok, %User{} = _user} = Users.update_user(user, update_attrs)
     end
 
     test "update_user/2 with invalid data returns error changeset" do

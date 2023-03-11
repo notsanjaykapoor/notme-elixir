@@ -126,29 +126,5 @@ defmodule Hello.CatalogTest do
       variant = variant_fixture()
       assert %Ecto.Changeset{} = Catalog.variant_change(variant)
     end
-
-    test "variant_search" do
-      variant = variant_fixture(%{name: "variant search", price: 1000, tags: ["tag-1", "tag-2"]})
-
-      # matching query on single fields
-      result = Catalog.variants_search("search")
-      dbg(result)
-      assert [%Variant{}=vsearch] = result
-      assert vsearch.id == variant.id
-
-      # matching query on multiple fields
-      result = Catalog.variants_search("name:search tags:tag-1")
-      dbg(result)
-      assert [%Variant{}=vsearch] = result
-      assert vsearch.id == variant.id
-
-      # non-matching query
-      result = Catalog.variants_search("name:search tags:xxx")
-      assert [] = result
-
-      # non-matching query
-      result = Catalog.variants_search("undefined")
-      assert [] = result
-    end
   end
 end
