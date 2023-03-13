@@ -5,7 +5,7 @@ defmodule HelloWeb.VariantController do
 
   def index(conn, params) do
     variants = Catalog.variants_list(params)
-    render(conn, :index, variants: variants)
+    render(conn, :index, variants: variants, query: "foo")
   end
 
 end

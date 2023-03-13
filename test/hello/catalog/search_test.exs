@@ -11,17 +11,15 @@ defmodule Hello.Catalog.SearchTest do
 
     # matching query on single field
     result = Search.search("search")
-    dbg(result)
     assert [%Variant{}=vsearch] = result
     assert vsearch.id == variant.id
 
-    # matching query on multiple fields
+    # matching query on multiple fields, name and tags
     result = Search.search("name:search tags:tag-1,tax-xxx")
-    dbg(result)
     assert [%Variant{}=variant_] = result
     assert variant_.id == variant.id
 
-    # matching query on multiple fields
+    # matching query on multiple fields, name and price
     result = Search.search("name:search price_gte:999")
     assert [%Variant{}=variant_] = result
     assert variant_.id == variant.id

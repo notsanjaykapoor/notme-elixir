@@ -3,10 +3,13 @@ defmodule Hello.Repo.Migrations.CreateVariants do
 
   def change do
     create table(:variants) do
-      add :price, :integer
+      add :lots, {:array, :integer}, default: []
       add :name, :string
-      add :tags, {:array, :string}
+      add :price, :integer
       add :product_id, references(:products, on_delete: :delete_all)
+      add :qavail, :integer, default: 0
+      add :qsold, :integer, default: 0
+      add :tags, {:array, :string}, default: []
 
       timestamps()
     end

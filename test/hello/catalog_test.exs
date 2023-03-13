@@ -8,7 +8,7 @@ defmodule Hello.CatalogTest do
 
     import Hello.CatalogFixtures
 
-    @invalid_attrs %{price: nil, name: nil, views: nil}
+    @invalid_attrs %{lots: [], price: nil, name: nil, views: nil}
 
     test "products_list/0 returns all products" do
       product = product_fixture()
@@ -88,11 +88,14 @@ defmodule Hello.CatalogTest do
     test "variant_create/1 with valid data creates a variant" do
       product = product_fixture()
 
-      valid_attrs = %{name: "some name", price: 42, product_id: product.id, tags: ["option1", "option2"]}
+      valid_attrs = %{lots: [], name: "some name", price: 42, product_id: product.id, qavail: 0, qsold: 0, tags: ["option1", "option2"]}
 
       assert {:ok, %Variant{} = variant} = Catalog.variant_create(valid_attrs)
+      assert variant.lots == []
       assert variant.name == "some name"
       assert variant.price == 42
+      assert variant.qavail == 0
+      assert variant.qsold == 0
       assert variant.tags == ["option1", "option2"]
     end
 

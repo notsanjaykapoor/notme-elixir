@@ -29,9 +29,12 @@ defmodule Hello.CatalogFixtures do
     {:ok, variant} =
       attrs
       |> Enum.into(%{
+        lots: [],
         name: "some name",
         price: 42,
         product_id: product.id,
+        qavail: 0,
+        qsold: 0,
         tags: ["option1", "option2"]
       })
       |> Hello.Catalog.variant_create()

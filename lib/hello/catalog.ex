@@ -4,10 +4,28 @@ defmodule Hello.Catalog do
   """
 
   import Ecto.Query, warn: false
+
   alias Hello.Repo
+  alias Hello.Catalog.Lot
   alias Hello.Catalog.Product
   alias Hello.Catalog.Search
   alias Hello.Catalog.Variant
+
+  def lot_create(%Variant{} = variant, qavail) do
+    attrs = %{qavail: qavail, variant_id: variant.id}
+
+    {:ok, lot} = %Lot{}
+      |> Lot.changeset(attrs)
+      |> Repo.insert()
+
+    variant_lots = [lot.id | variant.lots]
+    variant_qavail = qavail + variant.qavail
+    variant_attrs = %{lots: variant_lots, qavail: variant_qavail}
+
+    variant_update(variant, variant_attrs)
+
+    {:ok, lot}
+  end
 
   @doc """
   Returns the list of products.
@@ -57,14 +75,13 @@ defmodule Hello.Catalog do
     Repo.delete(product)
   end
 
-  def product_find_or_create(name) do
+  def product_find_or_create(name, price \\ :rand.uniform(10000)) do
     product = product_get_by_name(name)
 
     if product do
       {:ok, product}
     else
-      random_price = :rand.uniform(10000)
-      {:ok, _product} = product_create(%{name: name, price: random_price, views: 0})
+      product_create(%{name: name, price: price, views: 0})
     end
   end
 

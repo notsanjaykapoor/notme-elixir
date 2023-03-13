@@ -10,19 +10,40 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
+import Ecto.Query
+
 alias Hello.Catalog
 alias Hello.Catalog.Product
+alias Hello.Catalog.Variant
+alias Hello.Repo
 
-for id <- Enum.to_list(1..10) do
+Faker.start()
+
+for id <- Enum.to_list(1..25) do
   product_name = "Product #{id}"
   {:ok, %Product{} = product} = Catalog.product_find_or_create(product_name)
 
-  variant_sha = :crypto.hash(:md5, product.name) |> Base.encode16()
-  variant_name = "#{product.name} - #{variant_sha}"
+  variants = Repo.all(from v in Variant, where: v.product_id == ^product.id)
 
-  variant = Catalog.variant_get_by_name(variant_name)
+  if length(variants) == 0 do
+    for id <- Enum.to_list(1..2) do
+      # create variants iff product has no variants yet
+      variant_id = Faker.Superhero.name()
+      # variant_id = ExULID.ULID.generate()
+      variant_name = "#{product.name} - #{variant_id}"
 
-  unless variant do
-    {:ok, _} = Catalog.variant_create(%{name: variant_name, price: product.price, product_id: product.id, tags: ["p-#{product.id}"]})
+      variant = Catalog.variant_get_by_name(variant_name)
+
+      unless variant do
+        variant_price = product.price + :rand.uniform(1000)
+        {:ok, _} = Catalog.variant_create(%{name: variant_name, price: variant_price, product_id: product.id, tags: []})
+      end
+    end
+  end
+
+  variants = Repo.all(from v in Variant, where: v.lots == [])
+
+  for variant <- variants do
+    Catalog.lot_create(variant, :rand.uniform(1000))
   end
 end
