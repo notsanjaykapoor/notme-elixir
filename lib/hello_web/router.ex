@@ -19,6 +19,7 @@ defmodule HelloWeb.Router do
 
     get "/hello/:messenger", HelloController, :show
     get "/hello", HelloController, :index
+    resources "/options", OptionController, only: [:index]
     resources "/products", ProductController
     resources "/variants", VariantController, only: [:index]
     get "/", PageController, :home

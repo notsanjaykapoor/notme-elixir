@@ -3,7 +3,7 @@ defmodule Hello.Repo.Migrations.CreateProducts do
 
   def change do
     create table(:products) do
-      add :name, :string
+      add :name, :string, null: false
       add :price, :integer, null: false
       add :views, :integer, default: 0, null: false
 

@@ -6,25 +6,88 @@ defmodule Hello.Catalog do
   import Ecto.Query, warn: false
 
   alias Hello.Repo
+  alias Hello.Catalog.Location
   alias Hello.Catalog.Lot
+  alias Hello.Catalog.Option
+  alias Hello.Catalog.OptionSearch
   alias Hello.Catalog.Product
-  alias Hello.Catalog.Search
   alias Hello.Catalog.Variant
+  alias Hello.Catalog.VariantSearch
 
-  def lot_create(%Variant{} = variant, qavail) do
-    attrs = %{qavail: qavail, variant_id: variant.id}
+  def location_create(attrs \\ %{}) do
+    %Location{}
+    |> Location.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def location_find_or_create(name) do
+    location = location_get_by_name(name)
+
+    if location do
+      {:ok, location}
+    else
+      slug = name
+      |> String.replace(" ", "-")
+      |> String.downcase()
+
+      location_create(%{name: name, slug: slug})
+    end
+  end
+
+  def location_get_by_name(name) do
+    Repo.get_by(Location, [name: name])
+  end
+
+  def lot_create(%Variant{} = variant, location, qavail) do
+    attrs = %{location_id: location.id, qavail: qavail, variant_id: variant.id}
 
     {:ok, lot} = %Lot{}
       |> Lot.changeset(attrs)
       |> Repo.insert()
 
-    variant_lots = [lot.id | variant.lots]
+    variant_loc_ids = [location.id | variant.loc_ids]
+    variant_loc_slugs = [location.slug | variant.loc_slugs]
+    variant_lot_ids = [lot.id | variant.lot_ids]
     variant_qavail = qavail + variant.qavail
-    variant_attrs = %{lots: variant_lots, qavail: variant_qavail}
+    variant_attrs = %{
+      loc_ids: variant_loc_ids,
+      loc_slugs: variant_loc_slugs,
+      lot_ids: variant_lot_ids,
+      qavail: variant_qavail
+    }
 
     variant_update(variant, variant_attrs)
 
     {:ok, lot}
+  end
+
+  @spec option_create(:invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}) ::
+          any
+  def option_create(attrs \\ %{}) do
+    %Option{}
+    |> Option.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def option_get_by_pkg(pkg_size, pkg_count) do
+    Repo.get_by(Option, [pkg_size: pkg_size, pkg_count: pkg_count])
+  end
+
+  def options_list(params \\ %{}) do
+    query_params = Map.get(params, "query", "")
+    query_limit = Map.get(params, "limit", 50)
+    query_offset = Map.get(params, "offset", 0)
+
+    options = OptionSearch.search(query_params, query_limit, query_offset)
+
+    # options = Repo.all(Option)
+
+    options = for option <- options do
+      variants_count = Repo.one(from v in Variant, where: v.option_id == ^option.id, select: count("*"))
+      %{option | variants_count: variants_count}
+    end
+
+    options
   end
 
   @doc """
@@ -37,7 +100,15 @@ defmodule Hello.Catalog do
 
   """
   def products_list do
-    Repo.all(Product)
+    products = Repo.all(Product)
+
+    products = for product <- products do
+      options_count = Repo.one(from o in Option, where: o.product_id == ^product.id, select: count("*"))
+      variants_count = Repo.one(from v in Variant, where: v.product_id == ^product.id, select: count("*"))
+      %{product | options_count: options_count, variants_count: variants_count}
+    end
+
+    products
   end
 
 
@@ -155,9 +226,11 @@ defmodule Hello.Catalog do
 
   """
   def variants_list(params \\ %{}) do
-    search_query = get_in(params, ["query"]) || ""
+    query_params = Map.get(params, "query", "")
+    query_limit = Map.get(params, "limit", 50)
+    query_offset = Map.get(params, "offset", 0)
 
-    Search.search(search_query)
+    VariantSearch.search(query_params, query_limit, query_offset)
   end
 
   @doc """

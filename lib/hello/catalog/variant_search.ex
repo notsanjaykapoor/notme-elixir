@@ -1,6 +1,6 @@
-defmodule Hello.Catalog.Search do
+defmodule Hello.Catalog.VariantSearch do
   @moduledoc """
-  The Catalog Search context.
+  The Catalog VariantSearch context.
   """
 
   alias Hello.Catalog.Variant
@@ -8,12 +8,14 @@ defmodule Hello.Catalog.Search do
 
   import Ecto.Query
 
-  def search(search_query) do
+  def search(search_query, limit_, offset_) do
     {:ok, clauses} = _search_clauses(search_query)
 
     _query_base()
     |> _query_build(clauses)
     |> _query_sort()
+    |> limit(^limit_)
+    |> offset(^offset_)
     |> Repo.all
   end
 
@@ -27,7 +29,6 @@ defmodule Hello.Catalog.Search do
         {:ok, clauses}
     end
   end
-
 
   def _query_base() do
     from o in Variant
@@ -44,13 +45,19 @@ defmodule Hello.Catalog.Search do
   def _query_compose([_, "lots", value], query) do
     ids = String.split(value, ",")
       |> Enum.map(&String.to_integer/1)
-    where(query, [o], fragment("? && ?", ^ids, o.lots))
+    where(query, [o], fragment("? && ?", ^ids, o.lot_ids))
   end
 
   def _query_compose([_, "name", value], query) do
     value_normalized = String.trim(value)
       |> String.replace("-", " ")
     where(query, [o], ilike(o.name, ^"%#{value_normalized}%"))
+  end
+
+  def _query_compose([_, "options", value], query) do
+    ids = String.split(value, ",")
+      |> Enum.map(&String.to_integer/1)
+    where(query, [o], o.option_id in ^ids)
   end
 
   def _query_compose([_, "price_gte", value], query) do

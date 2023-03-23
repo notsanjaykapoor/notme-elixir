@@ -4,7 +4,9 @@ defmodule Hello.Catalog.Product do
 
   schema "products" do
     field :name, :string
+    field :options_count, :integer, virtual: true
     field :price, :integer
+    field :variants_count, :integer, virtual: true
     field :views, :integer
 
     timestamps()
@@ -21,7 +23,7 @@ defmodule Hello.Catalog.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:name, :price, :views])
+    |> cast(attrs, [:name, :options_count, :price, :variants_count, :views])
     |> validate_required([:name, :price, :views])
   end
 end

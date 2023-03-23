@@ -11,10 +11,18 @@ defmodule Hello.Catalog.Lot do
     timestamps()
   end
 
+  @spec changeset(
+          {map, map}
+          | %{
+              :__struct__ => atom | %{:__changeset__ => map, optional(any) => any},
+              optional(atom) => any
+            },
+          :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
+        ) :: Ecto.Changeset.t()
   @doc false
   def changeset(lot, attrs) do
     lot
     |> cast(attrs, [:qavail, :qsold, :location_id, :variant_id])
-    |> validate_required([:variant_id])
+    |> validate_required([:location_id, :variant_id])
   end
 end
