@@ -16,6 +16,19 @@ defmodule Hello.CatalogFixtures do
     location
   end
 
+  def merchant_fixture(attrs \\ %{}) do
+    {:ok, merchant} =
+      attrs
+      |> Enum.into(%{
+        name: "Merchant",
+        slug: "merchant-1",
+        state: "active",
+      })
+      |> Hello.Catalog.merchant_create()
+
+      merchant
+  end
+
   def option_fixture(attrs \\ %{}) do
     {:ok, option} =
       attrs
@@ -49,7 +62,8 @@ defmodule Hello.CatalogFixtures do
   Generate a variant.
   """
   def variant_fixture(attrs \\ %{}) do
-    product = product_fixture()
+    merchant = merchant_fixture()
+    product = product_fixture(%{merchant_id: merchant.id})
     option = option_fixture(%{product_id: product.id})
 
     {:ok, variant} =
@@ -57,6 +71,7 @@ defmodule Hello.CatalogFixtures do
       |> Enum.into(%{
         loc_name: "chicago 1",
         lot_id: ExULID.ULID.generate(),
+        merchant_id: merchant.id,
         name: "some name",
         option_id: option.id,
         price: 42,

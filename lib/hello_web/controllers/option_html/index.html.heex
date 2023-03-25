@@ -18,9 +18,12 @@
   </span>
 </div>
 
-<.table id="options" rows={@options} row_click={&JS.navigate(~p"/variants?query=options:#{&1}")}>
-  <:col :let={option} label="Name"><%= option.name %></:col>
-  <:col :let={option} label="Package Size"><%= option.pkg_size %></:col>
-  <:col :let={option} label="Package Count"><%= option.pkg_count %></:col>
-  <:col :let={option} label="Variants"><%= option.variants_count %></:col>
+<.table id="options" rows={@options}>
+  <:col :let={option} label="name"><%= option.name %></:col>
+  <:col :let={option} label="package size"><%= option.pkg_size %></:col>
+  <:col :let={option} label="package count"><%= option.pkg_count %></:col>
+  <:col :let={option} label="product id"><%= option.product_id %></:col>
+  <:col :let={option} label="# variants">
+    <.link class="font-bold text-blue-800" navigate={~p"/variants?query=options:#{option.id}"}><%= option.variants_count %></.link>
+  </:col>
 </.table>

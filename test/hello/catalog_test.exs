@@ -11,17 +11,21 @@ defmodule Hello.CatalogTest do
     @invalid_attrs %{lot_ids: [], price: nil, name: nil, views: nil}
 
     test "products_list/0 returns all products" do
-      product = %{product_fixture() | options_count: 0, variants_count: 0}
+      merchant = merchant_fixture()
+      product = %{product_fixture(%{merchant_id: merchant.id}) | options_count: 0, variants_count: 0}
       assert Catalog.products_list() == [product]
     end
 
     test "product_get!/1 returns the product with given id" do
-      product = product_fixture()
+      merchant = merchant_fixture()
+      product = product_fixture(%{merchant_id: merchant.id})
       assert Catalog.product_get!(product.id) == product
     end
 
     test "product_create/1 with valid data creates a product" do
-      valid_attrs = %{price: 12050, name: "some name", views: 0}
+      merchant = merchant_fixture()
+
+      valid_attrs = %{merchant_id: merchant.id, price: 12050, name: "some name", views: 0}
 
       assert {:ok, %Product{} = product} = Catalog.product_create(valid_attrs)
       assert product.name == "some name"
@@ -34,7 +38,8 @@ defmodule Hello.CatalogTest do
     end
 
     test "product_update/2 with valid data updates the product" do
-      product = product_fixture()
+      merchant = merchant_fixture()
+      product = product_fixture(%{merchant_id: merchant.id})
       update_attrs = %{price: 45670, name: "some updated title", views: 43}
 
       assert {:ok, %Product{} = product} = Catalog.product_update(product, update_attrs)
@@ -44,24 +49,28 @@ defmodule Hello.CatalogTest do
     end
 
     test "product_update/2 with invalid data returns error changeset" do
-      product = product_fixture()
+      merchant = merchant_fixture()
+      product = product_fixture(%{merchant_id: merchant.id})
       assert {:error, %Ecto.Changeset{}} = Catalog.product_update(product, @invalid_attrs)
       assert product == Catalog.product_get!(product.id)
     end
 
     test "product_delete/1 deletes the product" do
-      product = product_fixture()
+      merchant = merchant_fixture()
+      product = product_fixture(%{merchant_id: merchant.id})
       assert {:ok, %Product{}} = Catalog.product_delete(product)
       assert_raise Ecto.NoResultsError, fn -> Catalog.product_get!(product.id) end
     end
 
     test "product_change/1 returns a product changeset" do
-      product = product_fixture()
+      merchant = merchant_fixture()
+      product = product_fixture(%{merchant_id: merchant.id})
       assert %Ecto.Changeset{} = Catalog.product_change(product)
     end
 
     test "product_inc_page_view/1 returns product with view incremented" do
-      product = product_fixture()
+      merchant = merchant_fixture()
+      product = product_fixture(%{merchant_id: merchant.id})
       assert product.views == 0
       product = Catalog.product_inc_page_view(product)
       assert product.views == 1
@@ -86,12 +95,14 @@ defmodule Hello.CatalogTest do
     end
 
     test "variant_create/1 with valid data creates a variant" do
-      product = product_fixture()
+      merchant = merchant_fixture()
+      product = product_fixture(%{merchant_id: merchant.id})
       option = option_fixture(%{name: product.name, product_id: product.id})
 
       valid_attrs = %{
         loc_name: "chicago 1",
         lot_id: "12345",
+        merchant_id: merchant.id,
         name: "some name",
         option_id: option.id,
         price: 42,

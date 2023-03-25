@@ -1,3 +1,4 @@
+<!--
 <.header>
   Listing Products
   <:actions>
@@ -6,12 +7,38 @@
     </.link>
   </:actions>
 </.header>
+-->
+
+<div class="container grid grid-cols-10">
+  <span class="col-span-7 font-bold inline-block text">
+    Products Search Results : <%= length(@products) %>
+  </span>
+  <span class="col-span-3">
+    <%= form_for @conn, ~p"/products", [method: :get, autocomplete: "off"], fn f -> %>
+      <div class="relative h-11 w-full min-w-[200px]">
+        <%= text_input f, :query, autofocus: "", type: "", class: "peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-pink-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" %>
+        <label class="after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-pink-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:after:scale-x-100 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+          Search
+        </label>
+      </div>
+      <%= submit "" %>
+    <% end %>
+  </span>
+</div>
 
 <.table id="products" rows={@products} row_click={&JS.navigate(~p"/variants?query=products:#{&1}")}>
-  <:col :let={product} label="Name"><%= product.name %></:col>
-  <:col :let={product} label="Price"><%= product.price %></:col>
-  <:col :let={product} label="Options"><%= product.options_count %></:col>
-  <:col :let={product} label="Variants"><%= product.variants_count %></:col>
+  <:col :let={product} label="name"><%= product.name %></:col>
+  <:col :let={product} label="price"><%= product.price %></:col>
+  <:col :let={product} label="# options">
+    <.link class="font-bold text-blue-800" navigate={~p"/options?query=product:#{product.id}"}><%= product.options_count %></.link>
+  </:col>
+  <:col :let={product} label="# variants">
+    <.link class="font-bold text-blue-800" navigate={~p"/variants?query=product:#{product.id}"}><%= product.variants_count %></.link>
+  </:col>
+  <:col :let={product} label="merchant id">
+    <.link class="font-bold text-blue-800" navigate={~p"/merchants?query=merchant:#{product.merchant_id}"}><%= product.merchant_id %></.link>
+  </:col>
+  <!--
   <:action :let={product}>
     <div class="sr-only">
       <.link navigate={~p"/products/#{product}"}>Show</.link>
@@ -23,4 +50,5 @@
       Delete
     </.link>
   </:action>
+  -->
 </.table>

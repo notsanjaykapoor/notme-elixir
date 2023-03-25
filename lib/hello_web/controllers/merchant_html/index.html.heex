@@ -3,10 +3,10 @@
 
 <div class="container grid grid-cols-10">
   <span class="col-span-7 font-bold inline-block text">
-    Variants Search Results : <%= length(@variants) %>
+    Merchants Search Results : <%= length(@merchants) %>
   </span>
   <span class="col-span-3">
-    <%= form_for @conn, ~p"/variants", [method: :get, autocomplete: "off"], fn f -> %>
+    <%= form_for @conn, ~p"/merchants", [method: :get, autocomplete: "off"], fn f -> %>
       <div class="relative h-11 w-full min-w-[200px]">
         <%= text_input f, :query, autofocus: "", type: "", class: "peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-pink-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" %>
         <label class="after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-pink-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:after:scale-x-100 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
@@ -18,20 +18,10 @@
   </span>
 </div>
 
-<.table id="variants" rows={@variants}>
-  <:col :let={variant} label="name"><%= variant.name %></:col>
-  <:col :let={variant} label="price"><%= variant.price %></:col>
-  <:col :let={variant} label="tags"><%= Enum.join(variant.tags, ",") %></:col>
-  <:col :let={variant} label="qavail"><%= variant.qavail %></:col>
-  <:col :let={variant} label="lot"><%= variant.lot_id %></:col>
-  <:col :let={variant} label="location"><%= variant.loc_name %></:col>
-  <:col :let={variant} label="option id">
-    <span class="text-slate-500"><%= variant.option_id %></span>
-  </:col>
-  <:col :let={variant} label="product id">
-    <.link class="font-bold text-blue-800" navigate={~p"/products?query=id:#{variant.product_id}"}><%= variant.product_id %></.link>
-  </:col>
-  <:col :let={variant} label="merchant id">
-    <.link class="font-bold text-blue-800" navigate={~p"/merchants?query=id:#{variant.merchant_id}"}><%= variant.merchant_id %></.link>
-  </:col>
+<.table id="options" rows={@merchants}>
+  <:col :let={merchant} label="name"><%= merchant.name %></:col>
+  <:col :let={merchant} label="slug"><%= merchant.slug %></:col>
+  <:col :let={merchant} label="# products">
+    <.link class="font-bold text-blue-800" navigate={~p"/products?query=merchant:#{merchant.id}"}><%= merchant.products_count %></.link>
+</:col>
 </.table>

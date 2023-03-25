@@ -5,11 +5,9 @@ defmodule Hello.Catalog.Variant do
   alias Hello.Catalog.Product
 
   schema "variants" do
-    # field :loc_ids, {:array, :integer}
-    # field :loc_slugs, {:array, :string}
-    # field :lot_ids, {:array, :integer}
     field :loc_name, :string
     field :lot_id, :string
+    field :merchant_id, :id
     field :name, :string
     field :price, :integer
     field :tags, {:array, :string}
@@ -33,8 +31,8 @@ defmodule Hello.Catalog.Variant do
   @doc false
   def changeset(variant, attrs) do
     variant
-    |> cast(attrs, [:loc_name, :lot_id, :name, :option_id, :price, :product_id, :qavail, :qsold, :tags])
-    |> validate_required([:loc_name, :lot_id, :name, :option_id, :price, :product_id, :tags])
+    |> cast(attrs, [:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :qavail, :qsold, :tags])
+    |> validate_required([:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :tags])
   end
 
 end

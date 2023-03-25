@@ -3,13 +3,14 @@ defmodule Hello.Catalog.VariantSearch do
   The Catalog VariantSearch context.
   """
 
+  alias Hello.Catalog.Search
   alias Hello.Catalog.Variant
   alias Hello.Repo
 
   import Ecto.Query
 
   def search(search_query, limit_, offset_) do
-    {:ok, clauses} = _search_clauses(search_query)
+    {:ok, clauses} = Search.search_clauses(search_query)
 
     _query_base()
     |> _query_build(clauses)
@@ -17,17 +18,6 @@ defmodule Hello.Catalog.VariantSearch do
     |> limit(^limit_)
     |> offset(^offset_)
     |> Repo.all
-  end
-
-  def _search_clauses(search_query) do
-    clauses = Regex.scan(~r/([a-z_~]+):\s*([a-z-0-9,]+)/, search_query)
-
-    case length(clauses) do
-      0 -> # default clause uses name field
-        {:ok, [["name:#{search_query}", "name", search_query]]}
-      _ ->
-        {:ok, clauses}
-    end
   end
 
   def _query_base() do

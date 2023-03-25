@@ -4,8 +4,8 @@ defmodule HelloWeb.ProductController do
   alias Hello.Catalog
   alias Hello.Catalog.Product
 
-  def index(conn, _params) do
-    products = Catalog.products_list()
+  def index(conn, params) do
+    products = Catalog.products_list(params)
     render(conn, :index, products: products)
   end
 

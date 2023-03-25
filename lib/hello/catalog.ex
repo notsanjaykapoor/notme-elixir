@@ -7,10 +7,12 @@ defmodule Hello.Catalog do
 
   alias Hello.Repo
   alias Hello.Catalog.Location
-  alias Hello.Catalog.Lot
+  alias Hello.Catalog.Merchant
+  alias Hello.Catalog.MerchantSearch
   alias Hello.Catalog.Option
   alias Hello.Catalog.OptionSearch
   alias Hello.Catalog.Product
+  alias Hello.Catalog.ProductSearch
   alias Hello.Catalog.Variant
   alias Hello.Catalog.VariantSearch
 
@@ -38,27 +40,44 @@ defmodule Hello.Catalog do
     Repo.get_by(Location, [name: name])
   end
 
-  def lot_create(%Variant{} = variant, location, qavail) do
-    attrs = %{location_id: location.id, qavail: qavail, variant_id: variant.id}
+  def merchant_create(attrs \\ %{}) do
+    %Merchant{}
+    |> Merchant.changeset(attrs)
+    |> Repo.insert()
+  end
 
-    {:ok, lot} = %Lot{}
-      |> Lot.changeset(attrs)
-      |> Repo.insert()
+  def merchant_find_or_create(name) do
+    merchant = merchant_get_by_name(name)
 
-    variant_loc_ids = [location.id | variant.loc_ids]
-    variant_loc_slugs = [location.slug | variant.loc_slugs]
-    variant_lot_ids = [lot.id | variant.lot_ids]
-    variant_qavail = qavail + variant.qavail
-    variant_attrs = %{
-      loc_ids: variant_loc_ids,
-      loc_slugs: variant_loc_slugs,
-      lot_ids: variant_lot_ids,
-      qavail: variant_qavail
-    }
+    if merchant do
+      {:ok, merchant}
+    else
+      slug = name
+      |> String.replace(",", "")
+      |> String.replace(" ", "-")
+      |> String.downcase()
 
-    variant_update(variant, variant_attrs)
+      merchant_create(%{name: name, slug: slug, state: "active"})
+    end
+  end
 
-    {:ok, lot}
+  def merchant_get_by_name(name) do
+    Repo.get_by(Merchant, [name: name])
+  end
+
+  def merchants_list(params \\ %{}) do
+    query_params = Map.get(params, "query", "")
+    query_limit = Map.get(params, "limit", 50)
+    query_offset = Map.get(params, "offset", 0)
+
+    merchants = MerchantSearch.search(query_params, query_limit, query_offset)
+
+    merchants = for merchant <- merchants do
+      products_count = Repo.one(from o in Product, where: o.merchant_id == ^merchant.id, select: count("*"))
+      %{merchant | products_count: products_count}
+    end
+
+    merchants
   end
 
   @spec option_create(:invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}) ::
@@ -80,8 +99,6 @@ defmodule Hello.Catalog do
 
     options = OptionSearch.search(query_params, query_limit, query_offset)
 
-    # options = Repo.all(Option)
-
     options = for option <- options do
       variants_count = Repo.one(from v in Variant, where: v.option_id == ^option.id, select: count("*"))
       %{option | variants_count: variants_count}
@@ -99,9 +116,12 @@ defmodule Hello.Catalog do
       [%Product{}, ...]
 
   """
-  def products_list do
-    products = Repo.all(Product)
+  def products_list(params \\ %{}) do
+    query_params = Map.get(params, "query", "")
+    query_limit = Map.get(params, "limit", 50)
+    query_offset = Map.get(params, "offset", 0)
 
+    products = ProductSearch.search(query_params, query_limit, query_offset)
     products = for product <- products do
       options_count = Repo.one(from o in Option, where: o.product_id == ^product.id, select: count("*"))
       variants_count = Repo.one(from v in Variant, where: v.product_id == ^product.id, select: count("*"))
@@ -146,13 +166,13 @@ defmodule Hello.Catalog do
     Repo.delete(product)
   end
 
-  def product_find_or_create(name, price \\ :rand.uniform(10000)) do
-    product = product_get_by_name(name)
+  def product_find_or_create(merchant_id, name, price \\ :rand.uniform(10000)) do
+    product = product_get_by_name(merchant_id, name)
 
     if product do
       {:ok, product}
     else
-      product_create(%{name: name, price: price, views: 0})
+      product_create(%{merchant_id: merchant_id, name: name, price: price, views: 0})
     end
   end
 
@@ -174,8 +194,8 @@ defmodule Hello.Catalog do
     Repo.get!(Product, id)
   end
 
-  def product_get_by_name(name) do
-    Repo.get_by(Product, [name: name])
+  def product_get_by_name(merchant_id, name) do
+    Repo.get_by(Product, [merchant_id: merchant_id, name: name])
   end
 
   @doc """
@@ -227,7 +247,7 @@ defmodule Hello.Catalog do
   """
   def variants_list(params \\ %{}) do
     query_params = Map.get(params, "query", "")
-    query_limit = Map.get(params, "limit", 50)
+    query_limit = Map.get(params, "limit", 100)
     query_offset = Map.get(params, "offset", 0)
 
     VariantSearch.search(query_params, query_limit, query_offset)

@@ -3,6 +3,7 @@ defmodule Hello.Repo.Migrations.CreateOptions do
 
   def change do
     create table(:options) do
+      add :merchant_id, references(:merchants, on_delete: :delete_all)
       add :name, :string, null: false
       add :pkg_count, :integer
       add :pkg_size, :string

@@ -8,6 +8,7 @@ defmodule Hello.Repo.Migrations.CreateVariants do
       # add :lot_ids, {:array, :integer}, default: []
       add :loc_name, :string, null: false
       add :lot_id, :string, null: false
+      add :merchant_id, references(:merchants, on_delete: :delete_all)
       add :name, :string, null: false
       add :option_id, references(:options, on_delete: :delete_all)
       add :price, :integer, null: false

@@ -3,6 +3,7 @@ defmodule Hello.Catalog.Product do
   import Ecto.Changeset
 
   schema "products" do
+    field :merchant_id, :id
     field :name, :string
     field :options_count, :integer, virtual: true
     field :price, :integer
@@ -23,7 +24,7 @@ defmodule Hello.Catalog.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:name, :options_count, :price, :variants_count, :views])
-    |> validate_required([:name, :price, :views])
+    |> cast(attrs, [:merchant_id, :name, :options_count, :price, :variants_count, :views])
+    |> validate_required([:merchant_id, :name, :price, :views])
   end
 end
