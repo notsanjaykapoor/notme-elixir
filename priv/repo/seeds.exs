@@ -13,11 +13,11 @@
 import Ecto.Query
 
 alias Hello.Catalog
+alias Hello.Catalog.Item
 alias Hello.Catalog.Location
 alias Hello.Catalog.Merchant
 alias Hello.Catalog.Option
 alias Hello.Catalog.Product
-alias Hello.Catalog.Variant
 alias Hello.Repo
 
 Faker.start()
@@ -66,26 +66,26 @@ for merchant <- merchants do
     end
 
     options = Repo.all(from o in Option, where: o.product_id == ^product.id)
-    variants = Repo.all(from v in Variant, where: v.product_id == ^product.id)
+    items = Repo.all(from o in Item, where: o.product_id == ^product.id)
 
-    if length(variants) == 0 do
-      # initialize variants
+    if length(items) == 0 do
+      # initialize items
       for option <- options do
         location = Enum.random(locations)
         lot_id = ExULID.ULID.generate()
 
         product = Catalog.product_get!(option.product_id)
 
-        variant_name = "#{product.name} - #{option.pkg_size} - #{option.pkg_count} count"
-        variant_price = product.price + :rand.uniform(1000)
+        item_name = "#{product.name} - #{option.pkg_size} - #{option.pkg_count} count"
+        item_price = product.price + :rand.uniform(1000)
 
-        {:ok, _} = Catalog.variant_create(%{
+        {:ok, _} = Catalog.item_create(%{
             loc_name: location.slug,
             lot_id: lot_id,
             merchant_id: merchant.id,
-            name: variant_name,
+            name: item_name,
             option_id: option.id,
-            price: variant_price,
+            price: item_price,
             product_id: product.id,
             qavail: :rand.uniform(1000),
             tags: []

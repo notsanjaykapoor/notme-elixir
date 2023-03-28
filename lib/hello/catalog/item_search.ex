@@ -1,10 +1,10 @@
-defmodule Hello.Catalog.VariantSearch do
+defmodule Hello.Catalog.ItemSearch do
   @moduledoc """
-  The Catalog VariantSearch context.
+  The Catalog ItemSearch context.
   """
 
+  alias Hello.Catalog.Item
   alias Hello.Catalog.Search
-  alias Hello.Catalog.Variant
   alias Hello.Repo
 
   import Ecto.Query
@@ -21,7 +21,7 @@ defmodule Hello.Catalog.VariantSearch do
   end
 
   def _query_base() do
-    from o in Variant
+    from o in Item
   end
 
   def _query_build(query, clauses) do
@@ -36,6 +36,16 @@ defmodule Hello.Catalog.VariantSearch do
     ids = String.split(value, ",")
       |> Enum.map(&String.to_integer/1)
     where(query, [o], fragment("? && ?", ^ids, o.lot_ids))
+  end
+
+  def _query_compose([x, "merchant", value], query) do
+    _query_compose([x, "merchants", value], query)
+  end
+
+  def _query_compose([_, "merchants", value], query) do
+    ids = String.split(value, ",")
+      |> Enum.map(&String.to_integer/1)
+    where(query, [o], o.merchant_id in ^ids)
   end
 
   def _query_compose([_, "name", value], query) do

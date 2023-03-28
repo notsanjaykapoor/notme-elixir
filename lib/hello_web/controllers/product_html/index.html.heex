@@ -11,7 +11,7 @@
 
 <div class="container grid grid-cols-10">
   <span class="col-span-7 font-bold inline-block text">
-    Products Search Results : <%= length(@products) %>
+    Product Search Results : <%= length(@products) %>
   </span>
   <span class="col-span-3">
     <%= form_for @conn, ~p"/products", [method: :get, autocomplete: "off"], fn f -> %>
@@ -26,14 +26,14 @@
   </span>
 </div>
 
-<.table id="products" rows={@products} row_click={&JS.navigate(~p"/variants?query=products:#{&1}")}>
+<.table id="products" rows={@products} row_click={&JS.navigate(~p"/items?query=products:#{&1}")}>
   <:col :let={product} label="name"><%= product.name %></:col>
   <:col :let={product} label="price"><%= product.price %></:col>
   <:col :let={product} label="# options">
     <.link class="font-bold text-blue-800" navigate={~p"/options?query=product:#{product.id}"}><%= product.options_count %></.link>
   </:col>
-  <:col :let={product} label="# variants">
-    <.link class="font-bold text-blue-800" navigate={~p"/variants?query=product:#{product.id}"}><%= product.variants_count %></.link>
+  <:col :let={product} label="# items">
+    <.link class="font-bold text-blue-800" navigate={~p"/items?query=product:#{product.id}"}><%= product.items_count %></.link>
   </:col>
   <:col :let={product} label="merchant id">
     <.link class="font-bold text-blue-800" navigate={~p"/merchants?query=merchant:#{product.merchant_id}"}><%= product.merchant_id %></.link>

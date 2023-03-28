@@ -7,12 +7,12 @@ defmodule Hello.Repo.Migrations.CreateLots do
       add :location_id, :integer, default: 0
       add :qavail, :integer, default: 0
       add :qsold, :integer, default: 0
-      add :variant_id, references(:variants, on_delete: :nothing)
+      add :item_id, references(:items, on_delete: :nothing)
 
       timestamps()
     end
 
     create index(:lots, [:location_id])
-    create index(:lots, [:variant_id])
+    create index(:lots, [:item_id])
   end
 end

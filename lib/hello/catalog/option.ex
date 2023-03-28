@@ -3,11 +3,11 @@ defmodule Hello.Catalog.Option do
   import Ecto.Changeset
 
   schema "options" do
+    field :items_count, :integer, virtual: true
     field :name, :string
     field :pkg_count, :integer
     field :pkg_size, :string
     field :product_id, :id
-    field :variants_count, :integer, virtual: true
 
     timestamps()
   end
@@ -15,7 +15,7 @@ defmodule Hello.Catalog.Option do
   @doc false
   def changeset(option, attrs) do
     option
-    |> cast(attrs, [:name, :pkg_size, :pkg_count, :product_id, :variants_count])
+    |> cast(attrs, [:name, :pkg_size, :pkg_count, :product_id, :items_count])
     |> validate_required([:name, :pkg_size, :pkg_count, :product_id])
   end
 end

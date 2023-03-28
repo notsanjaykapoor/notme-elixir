@@ -3,7 +3,7 @@
 
 <div class="container grid grid-cols-10">
   <span class="col-span-7 font-bold inline-block text">
-    Merchants Search Results : <%= length(@merchants) %>
+    Merchant Search Results : <%= length(@merchants) %>
   </span>
   <span class="col-span-3">
     <%= form_for @conn, ~p"/merchants", [method: :get, autocomplete: "off"], fn f -> %>

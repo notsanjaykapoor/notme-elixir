@@ -3,10 +3,10 @@ defmodule Hello.Catalog.Lot do
   import Ecto.Changeset
 
   schema "lots" do
+    field :item_id, :id
     field :location_id, :integer
     field :qavail, :integer
     field :qsold, :integer
-    field :variant_id, :id
 
     timestamps()
   end
@@ -22,7 +22,7 @@ defmodule Hello.Catalog.Lot do
   @doc false
   def changeset(lot, attrs) do
     lot
-    |> cast(attrs, [:qavail, :qsold, :location_id, :variant_id])
-    |> validate_required([:location_id, :variant_id])
+    |> cast(attrs, [:item_id, :location_id, :qavail, :qsold])
+    |> validate_required([:item_id, :location_id])
   end
 end

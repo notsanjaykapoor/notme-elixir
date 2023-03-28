@@ -1,10 +1,10 @@
-defmodule Hello.Catalog.Variant do
+defmodule Hello.Catalog.Item do
   use Ecto.Schema
   import Ecto.Changeset
   alias Hello.Catalog.Option
   alias Hello.Catalog.Product
 
-  schema "variants" do
+  schema "items" do
     field :loc_name, :string
     field :lot_id, :string
     field :merchant_id, :id
@@ -29,8 +29,8 @@ defmodule Hello.Catalog.Variant do
           :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
         ) :: Ecto.Changeset.t()
   @doc false
-  def changeset(variant, attrs) do
-    variant
+  def changeset(item, attrs) do
+    item
     |> cast(attrs, [:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :qavail, :qsold, :tags])
     |> validate_required([:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :tags])
   end

@@ -6,6 +6,8 @@ defmodule Hello.Catalog do
   import Ecto.Query, warn: false
 
   alias Hello.Repo
+  alias Hello.Catalog.Item
+  alias Hello.Catalog.ItemSearch
   alias Hello.Catalog.Location
   alias Hello.Catalog.Merchant
   alias Hello.Catalog.MerchantSearch
@@ -13,8 +15,6 @@ defmodule Hello.Catalog do
   alias Hello.Catalog.OptionSearch
   alias Hello.Catalog.Product
   alias Hello.Catalog.ProductSearch
-  alias Hello.Catalog.Variant
-  alias Hello.Catalog.VariantSearch
 
   def location_create(attrs \\ %{}) do
     %Location{}
@@ -100,8 +100,8 @@ defmodule Hello.Catalog do
     options = OptionSearch.search(query_params, query_limit, query_offset)
 
     options = for option <- options do
-      variants_count = Repo.one(from v in Variant, where: v.option_id == ^option.id, select: count("*"))
-      %{option | variants_count: variants_count}
+      items_count = Repo.one(from v in Item, where: v.option_id == ^option.id, select: count("*"))
+      %{option | items_count: items_count}
     end
 
     options
@@ -124,8 +124,8 @@ defmodule Hello.Catalog do
     products = ProductSearch.search(query_params, query_limit, query_offset)
     products = for product <- products do
       options_count = Repo.one(from o in Option, where: o.product_id == ^product.id, select: count("*"))
-      variants_count = Repo.one(from v in Variant, where: v.product_id == ^product.id, select: count("*"))
-      %{product | options_count: options_count, variants_count: variants_count}
+      items_count = Repo.one(from o in Item, where: o.product_id == ^product.id, select: count("*"))
+      %{product | options_count: options_count, items_count: items_count}
     end
 
     products
@@ -234,109 +234,109 @@ defmodule Hello.Catalog do
     |> Repo.update()
   end
 
-  alias Hello.Catalog.Variant
+  alias Hello.Catalog.Item
 
   @doc """
-  Returns the list of variants.
+  Returns the list of items.
 
   ## Examples
 
-      iex> variants_list()
-      [%Variant{}, ...]
+      iex> items_list()
+      [%Item{}, ...]
 
   """
-  def variants_list(params \\ %{}) do
+  def items_list(params \\ %{}) do
     query_params = Map.get(params, "query", "")
     query_limit = Map.get(params, "limit", 100)
     query_offset = Map.get(params, "offset", 0)
 
-    VariantSearch.search(query_params, query_limit, query_offset)
+    ItemSearch.search(query_params, query_limit, query_offset)
   end
 
   @doc """
-  Gets a single variant.
+  Gets a single item.
 
-  Raises `Ecto.NoResultsError` if the Variant does not exist.
+  Raises `Ecto.NoResultsError` if the Item does not exist.
 
   ## Examples
 
-      iex> variant_get!(123)
-      %Variant{}
+      iex> item_get!(123)
+      %Item{}
 
-      iex> variant_get!(456)
+      iex> item_get!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def variant_get!(id) do
-    Repo.get!(Variant, id)
+  def item_get!(id) do
+    Repo.get!(Item, id)
   end
 
-  def variant_get_by_name(name) do
-    Repo.get_by(Variant, [name: name])
+  def item_get_by_name(name) do
+    Repo.get_by(Item, [name: name])
   end
 
   @doc """
-  Creates a variant.
+  Creates a item.
 
   ## Examples
 
-      iex> variant_create(%{field: value})
-      {:ok, %Variant{}}
+      iex> item_create(%{field: value})
+      {:ok, %Item{}}
 
-      iex> variant_create(%{field: bad_value})
+      iex> item_create(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def variant_create(attrs \\ %{}) do
-    %Variant{}
-    |> Variant.changeset(attrs)
+  def item_create(attrs \\ %{}) do
+    %Item{}
+    |> Item.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a variant.
+  Updates a item.
 
   ## Examples
 
-      iex> variant_update(variant, %{field: new_value})
-      {:ok, %Variant{}}
+      iex> item_update(item, %{field: new_value})
+      {:ok, %Item{}}
 
-      iex> variant_update(variant, %{field: bad_value})
+      iex> item_update(item, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def variant_update(%Variant{} = variant, attrs) do
-    variant
-    |> Variant.changeset(attrs)
+  def item_update(%Item{} = item, attrs) do
+    item
+    |> Item.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a variant.
+  Deletes a item.
 
   ## Examples
 
-      iex> variant_delete(variant)
-      {:ok, %Variant{}}
+      iex> item_delete(item)
+      {:ok, %Item{}}
 
-      iex> variant_delete(variant)
+      iex> item_delete(item)
       {:error, %Ecto.Changeset{}}
 
   """
-  def variant_delete(%Variant{} = variant) do
-    Repo.delete(variant)
+  def item_delete(%Item{} = item) do
+    Repo.delete(item)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking variant changes.
+  Returns an `%Ecto.Changeset{}` for tracking item changes.
 
   ## Examples
 
-      iex> variant_change(variant)
-      %Ecto.Changeset{data: %Variant{}}
+      iex> item_change(item)
+      %Ecto.Changeset{data: %item{}}
 
   """
-  def variant_change(%Variant{} = variant, attrs \\ %{}) do
-    Variant.changeset(variant, attrs)
+  def item_change(%Item{} = item, attrs \\ %{}) do
+    Item.changeset(item, attrs)
   end
 end

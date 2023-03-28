@@ -12,7 +12,7 @@ defmodule Hello.CatalogTest do
 
     test "products_list/0 returns all products" do
       merchant = merchant_fixture()
-      product = %{product_fixture(%{merchant_id: merchant.id}) | options_count: 0, variants_count: 0}
+      product = %{product_fixture(%{merchant_id: merchant.id}) | options_count: 0, items_count: 0}
       assert Catalog.products_list() == [product]
     end
 
@@ -77,24 +77,24 @@ defmodule Hello.CatalogTest do
     end
   end
 
-  describe "variants" do
-    alias Hello.Catalog.Variant
+  describe "items" do
+    alias Hello.Catalog.Item
 
     import Hello.CatalogFixtures
 
     @invalid_attrs %{name: nil, price: nil, tags: nil}
 
-    test "variants_list/0 returns all variants" do
-      variant = variant_fixture()
-      assert Catalog.variants_list() == [variant]
+    test "items_list/0 returns all items" do
+      item = item_fixture()
+      assert Catalog.items_list() == [item]
     end
 
-    test "variant_get!/1 returns the variant with given id" do
-      variant = variant_fixture()
-      assert Catalog.variant_get!(variant.id) == variant
+    test "item_get!/1 returns the item with given id" do
+      item = item_fixture()
+      assert Catalog.item_get!(item.id) == item
     end
 
-    test "variant_create/1 with valid data creates a variant" do
+    test "item_create/1 with valid data creates a item" do
       merchant = merchant_fixture()
       product = product_fixture(%{merchant_id: merchant.id})
       option = option_fixture(%{name: product.name, product_id: product.id})
@@ -112,47 +112,47 @@ defmodule Hello.CatalogTest do
         tags: ["option1", "option2"],
       }
 
-      assert {:ok, %Variant{} = variant} = Catalog.variant_create(valid_attrs)
-      assert variant.loc_name == "chicago 1"
-      assert variant.lot_id == "12345"
-      assert variant.name == "some name"
-      assert variant.option_id == option.id
-      assert variant.price == 42
-      assert variant.product_id == product.id
-      assert variant.qavail == 0
-      assert variant.qsold == 0
-      assert variant.tags == ["option1", "option2"]
+      assert {:ok, %Item{} = item} = Catalog.item_create(valid_attrs)
+      assert item.loc_name == "chicago 1"
+      assert item.lot_id == "12345"
+      assert item.name == "some name"
+      assert item.option_id == option.id
+      assert item.price == 42
+      assert item.product_id == product.id
+      assert item.qavail == 0
+      assert item.qsold == 0
+      assert item.tags == ["option1", "option2"]
     end
 
-    test "variant_create/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Catalog.variant_create(@invalid_attrs)
+    test "item_create/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Catalog.item_create(@invalid_attrs)
     end
 
-    test "variant_update/2 with valid data updates the variant" do
-      variant = variant_fixture()
+    test "item_update/2 with valid data updates the item" do
+      item = item_fixture()
       update_attrs = %{name: "some updated name", price: 43, tags: ["option1"]}
 
-      assert {:ok, %Variant{} = variant} = Catalog.variant_update(variant, update_attrs)
-      assert variant.name == "some updated name"
-      assert variant.price == 43
-      assert variant.tags == ["option1"]
+      assert {:ok, %Item{} = item} = Catalog.item_update(item, update_attrs)
+      assert item.name == "some updated name"
+      assert item.price == 43
+      assert item.tags == ["option1"]
     end
 
-    test "variant_update/2 with invalid data returns error changeset" do
-      variant = variant_fixture()
-      assert {:error, %Ecto.Changeset{}} = Catalog.variant_update(variant, @invalid_attrs)
-      assert variant == Catalog.variant_get!(variant.id)
+    test "item_update/2 with invalid data returns error changeset" do
+      item = item_fixture()
+      assert {:error, %Ecto.Changeset{}} = Catalog.item_update(item, @invalid_attrs)
+      assert item == Catalog.item_get!(item.id)
     end
 
-    test "variant_delete/1 deletes the variant" do
-      variant = variant_fixture()
-      assert {:ok, %Variant{}} = Catalog.variant_delete(variant)
-      assert_raise Ecto.NoResultsError, fn -> Catalog.variant_get!(variant.id) end
+    test "item_delete/1 deletes the item" do
+      item = item_fixture()
+      assert {:ok, %Item{}} = Catalog.item_delete(item)
+      assert_raise Ecto.NoResultsError, fn -> Catalog.item_get!(item.id) end
     end
 
-    test "variant_change/1 returns a variant changeset" do
-      variant = variant_fixture()
-      assert %Ecto.Changeset{} = Catalog.variant_change(variant)
+    test "item_change/1 returns a item changeset" do
+      item = item_fixture()
+      assert %Ecto.Changeset{} = Catalog.item_change(item)
     end
   end
 end

@@ -59,14 +59,14 @@ defmodule Hello.CatalogFixtures do
   end
 
   @doc """
-  Generate a variant.
+  Generate a item.
   """
-  def variant_fixture(attrs \\ %{}) do
+  def item_fixture(attrs \\ %{}) do
     merchant = merchant_fixture()
     product = product_fixture(%{merchant_id: merchant.id})
     option = option_fixture(%{product_id: product.id})
 
-    {:ok, variant} =
+    {:ok, item} =
       attrs
       |> Enum.into(%{
         loc_name: "chicago 1",
@@ -80,8 +80,8 @@ defmodule Hello.CatalogFixtures do
         qsold: 0,
         tags: ["option1", "option2"]
       })
-      |> Hello.Catalog.variant_create()
+      |> Hello.Catalog.item_create()
 
-    variant
+    item
   end
 end

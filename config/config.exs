@@ -18,6 +18,7 @@ config :hello, HelloWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Hello.PubSub,
+  secret_key_base: "DAF3EQHbyGNt+rHTIRG5if61rRQN5cb8tFjt6VW6jzEPWT+fFrqDkbvvCXXXhF6B",
   live_view: [signing_salt: "XKm99qbI"]
 
 # Configures the mailer

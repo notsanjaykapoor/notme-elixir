@@ -3,7 +3,7 @@
 
 <div class="container grid grid-cols-10">
   <span class="col-span-7 font-bold inline-block text">
-    Options Search Results : <%= length(@options) %>
+    Option Search Results : <%= length(@options) %>
   </span>
   <span class="col-span-3">
     <%= form_for @conn, ~p"/options", [method: :get, autocomplete: "off"], fn f -> %>
@@ -23,7 +23,7 @@
   <:col :let={option} label="package size"><%= option.pkg_size %></:col>
   <:col :let={option} label="package count"><%= option.pkg_count %></:col>
   <:col :let={option} label="product id"><%= option.product_id %></:col>
-  <:col :let={option} label="# variants">
-    <.link class="font-bold text-blue-800" navigate={~p"/variants?query=options:#{option.id}"}><%= option.variants_count %></.link>
+  <:col :let={option} label="# items">
+    <.link class="font-bold text-blue-800" navigate={~p"/items?query=options:#{option.id}"}><%= option.items_count %></.link>
   </:col>
 </.table>

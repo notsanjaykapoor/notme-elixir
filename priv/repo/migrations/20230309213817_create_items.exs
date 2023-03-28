@@ -1,8 +1,8 @@
-defmodule Hello.Repo.Migrations.CreateVariants do
+defmodule Hello.Repo.Migrations.CreateItems do
   use Ecto.Migration
 
   def change do
-    create table(:variants) do
+    create table(:items) do
       # add :loc_ids, {:array, :integer}, default: []
       # add :loc_slugs, {:array, :string}, default: []
       # add :lot_ids, {:array, :integer}, default: []
@@ -20,8 +20,8 @@ defmodule Hello.Repo.Migrations.CreateVariants do
       timestamps()
     end
 
-    create index(:variants, [:option_id])
-    create index(:variants, [:product_id])
-    create unique_index(:variants, [:name, :option_id, :product_id])
+    create index(:items, [:option_id])
+    create index(:items, [:product_id])
+    create unique_index(:items, [:name, :option_id, :product_id])
   end
 end
