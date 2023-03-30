@@ -21,6 +21,7 @@ defmodule HelloWeb.Router do
     get "/hello", HelloController, :index
 
     resources "/items", ItemController, only: [:index]
+    live "/merchants/:merchant_id/stream", MerchantLive
     resources "/merchants", MerchantController, only: [:index]
     resources "/options", OptionController, only: [:index]
     resources "/products", ProductController

@@ -1,0 +1,20 @@
+<div class="container grid grid-cols-10">
+  <span class="col-span-7 font-bold inline-block text">
+    Merchant '<%= @merchant.name %>' Stream
+  </span>
+  <span class="col-span-3 inline-block text text-xs">
+    <button class="float-right" phx-click="update">
+      <Heroicons.pencil solid class="w-4 h-4 text-indigo-700"/>
+    </button>
+  </span>
+</div>
+
+<.table id="items" rows={@streams.items}>
+  <:col :let={{_id, item}} label="name"><%= item.name %></:col>
+  <:col :let={{_id, item}} label="sku"><%= item.sku %></:col>
+  <:col :let={{_id, item}} label="price"><%= item.price %></:col>
+  <:col :let={{_id, item}} label="tags"><%= Enum.join(item.tags, ",") %></:col>
+  <:col :let={{_id, item}} label="qavail"><%= item.qavail %></:col>
+  <:col :let={{_id, item}} label="lot"><%= item.lot_id %></:col>
+  <:col :let={{_id, item}} label="id"><%= item.id %></:col>
+</.table>

@@ -13,6 +13,7 @@ defmodule Hello.Catalog.Item do
     field :tags, {:array, :string}
     field :qavail, :integer
     field :qsold, :integer
+    field :sku, :string
 
     belongs_to :option, Option
     belongs_to :product, Product
@@ -31,8 +32,8 @@ defmodule Hello.Catalog.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :qavail, :qsold, :tags])
-    |> validate_required([:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :tags])
+    |> cast(attrs, [:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :qavail, :qsold, :sku, :tags])
+    |> validate_required([:loc_name, :lot_id, :merchant_id, :name, :option_id, :price, :product_id, :sku, :tags])
   end
 
 end

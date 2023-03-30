@@ -18,10 +18,15 @@
   </span>
 </div>
 
-<.table id="options" rows={@merchants}>
+<.table id="merchants" rows={@merchants}>
   <:col :let={merchant} label="name"><%= merchant.name %></:col>
   <:col :let={merchant} label="slug"><%= merchant.slug %></:col>
   <:col :let={merchant} label="# products">
     <.link class="font-bold text-blue-800" navigate={~p"/products?query=merchant:#{merchant.id}"}><%= merchant.products_count %></.link>
-</:col>
+  </:col>
+  <:col :let={merchant} label="">
+    <.link class="font-bold text-blue-800" navigate={~p"/merchants/#{merchant.id}/stream"}>
+      <Heroicons.cog_6_tooth solid class="w-4 h-4 text-indigo-700"/>
+    </.link>
+  </:col>
 </.table>

@@ -1,10 +1,10 @@
 defmodule HelloWeb.MerchantController do
   use HelloWeb, :controller
 
-  alias Hello.Catalog
+  alias Hello.MerchantService
 
   def index(conn, params) do
-    merchants = Catalog.merchants_list(params)
+    merchants = MerchantService.merchants_list(params)
     render(conn, :index, merchants: merchants)
   end
 

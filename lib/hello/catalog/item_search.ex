@@ -78,6 +78,10 @@ defmodule Hello.Catalog.ItemSearch do
     where(query, [o], o.product_id in ^ids)
   end
 
+  def _query_compose([_, "sort", "random"], query) do
+    order_by(query, [o], fragment("RANDOM()"))
+  end
+
   def _query_compose([_, "tags", value], query) do
     tags_list = String.split(value, ",")
     where(query, [o], fragment("? && ?", ^tags_list, o.tags))

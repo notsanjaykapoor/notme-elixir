@@ -12,12 +12,17 @@
 
 import Ecto.Query
 
-alias Hello.Catalog
+alias Hello.OptionService
 alias Hello.Catalog.Item
 alias Hello.Catalog.Location
 alias Hello.Catalog.Merchant
 alias Hello.Catalog.Option
 alias Hello.Catalog.Product
+alias Hello.ItemService
+alias Hello.LocationService
+alias Hello.MerchantService
+alias Hello.OptionService
+alias Hello.ProductService
 alias Hello.Repo
 
 Faker.start()
@@ -28,7 +33,7 @@ if length(merchants) == 0 do
   for _id <- Enum.to_list(1..3) do
     merchant_name = Faker.Pokemon.name()
 
-    {:ok, %Merchant{} = _merchant} = Catalog.merchant_find_or_create(merchant_name)
+    {:ok, %Merchant{} = _merchant} = MerchantService.merchant_find_or_create(merchant_name)
   end
 end
 
@@ -36,7 +41,7 @@ merchants = Repo.all(from o in Merchant)
 
 for id <- Enum.to_list(1..5) do
   location_name = "Warehouse #{id}"
-  {:ok, %Location{} = _location} = Catalog.location_find_or_create(location_name)
+  {:ok, %Location{} = _location} = LocationService.location_find_or_create(location_name)
 end
 
 locations = Repo.all(from o in Location)
@@ -48,7 +53,7 @@ for merchant <- merchants do
   for _id <- Enum.to_list(1..10) do
     product_name = Faker.Superhero.name()
 
-    {:ok, %Product{} = product} = Catalog.product_find_or_create(merchant.id, product_name)
+    {:ok, %Product{} = product} = ProductService.product_find_or_create(merchant.id, product_name)
 
     options = Repo.all(from o in Option, where: o.product_id == ^product.id)
 
@@ -61,7 +66,7 @@ for merchant <- merchants do
         pkg_size = Enum.at(pkg_sizes, id-1)
         pkg_count = Enum.at(pkg_counts, id-1)
         option_name = "#{product.name} - #{pkg_size} - #{pkg_count}"
-        {:ok, _} = Catalog.option_create(%{name: option_name, pkg_count: pkg_count, pkg_size: pkg_size, product_id: product.id})
+        {:ok, _} = OptionService.option_create(%{name: option_name, pkg_count: pkg_count, pkg_size: pkg_size, product_id: product.id})
       end
     end
 
@@ -72,14 +77,17 @@ for merchant <- merchants do
       # initialize items
       for option <- options do
         location = Enum.random(locations)
-        lot_id = ExULID.ULID.generate()
 
-        product = Catalog.product_get!(option.product_id)
+        # lot shortcut
+        lot_id = "#{location.slug}-#{String.downcase(String.slice(ExULID.ULID.generate(), 21..-1))}"
+
+        product = ProductService.product_get!(option.product_id)
 
         item_name = "#{product.name} - #{option.pkg_size} - #{option.pkg_count} count"
         item_price = product.price + :rand.uniform(1000)
+        item_sku = "#{String.downcase(String.slice(product.name, 0..2))}-#{option.pkg_size}-#{option.pkg_count}"
 
-        {:ok, _} = Catalog.item_create(%{
+        {:ok, _} = ItemService.item_create(%{
             loc_name: location.slug,
             lot_id: lot_id,
             merchant_id: merchant.id,
@@ -88,6 +96,7 @@ for merchant <- merchants do
             price: item_price,
             product_id: product.id,
             qavail: :rand.uniform(1000),
+            sku: item_sku,
             tags: []
           })
       end

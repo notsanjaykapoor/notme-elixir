@@ -20,11 +20,11 @@
 
 <.table id="items" rows={@items}>
   <:col :let={item} label="name"><%= item.name %></:col>
+  <:col :let={item} label="sku"><%= item.sku %></:col>
   <:col :let={item} label="price"><%= item.price %></:col>
   <:col :let={item} label="tags"><%= Enum.join(item.tags, ",") %></:col>
   <:col :let={item} label="qavail"><%= item.qavail %></:col>
   <:col :let={item} label="lot"><%= item.lot_id %></:col>
-  <:col :let={item} label="location"><%= item.loc_name %></:col>
   <:col :let={item} label="option id">
     <span class="text-slate-500"><%= item.option_id %></span>
   </:col>

@@ -14,6 +14,7 @@ defmodule HelloWeb.MerchantSocket do
         {:ok, socket}
       {:error, error} ->
         Logger.error("#{__MODULE__} connect error #{inspect(error)}")
+        {:error, error}
     end
   end
 

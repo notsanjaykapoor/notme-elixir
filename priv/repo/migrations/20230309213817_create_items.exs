@@ -15,6 +15,7 @@ defmodule Hello.Repo.Migrations.CreateItems do
       add :product_id, references(:products, on_delete: :delete_all)
       add :qavail, :integer, default: 0
       add :qsold, :integer, default: 0
+      add :sku, :string, null: false
       add :tags, {:array, :string}, default: []
 
       timestamps()

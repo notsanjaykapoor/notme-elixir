@@ -1,10 +1,10 @@
 defmodule HelloWeb.ItemController do
   use HelloWeb, :controller
 
-  alias Hello.Catalog
+  alias Hello.ItemService
 
   def index(conn, params) do
-    items = Catalog.items_list(params)
+    items = ItemService.items_list(params)
     render(conn, :index, items: items)
   end
 

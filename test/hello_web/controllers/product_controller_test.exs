@@ -1,7 +1,8 @@
 defmodule HelloWeb.ProductControllerTest do
   use HelloWeb.ConnCase
 
-  import Hello.CatalogFixtures
+  import Hello.MerchantServiceFixtures
+  import Hello.ProductServiceFixtures
 
   @create_attrs %{price: 12050, name: "some title", views: 42}
   @update_attrs %{price: 45670, name: "some updated title", views: 43}
