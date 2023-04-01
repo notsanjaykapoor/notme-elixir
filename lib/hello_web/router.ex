@@ -8,6 +8,7 @@ defmodule HelloWeb.Router do
     plug :put_root_layout, {HelloWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug HelloWeb.PlugAuth
   end
 
   pipeline :api do
@@ -21,6 +22,8 @@ defmodule HelloWeb.Router do
     get "/hello", HelloController, :index
 
     resources "/items", ItemController, only: [:index]
+    get "/login", PageController, :login
+    get "/logout", PageController, :logout
     live "/merchants/:merchant_id/stream", MerchantLive
     resources "/merchants", MerchantController, only: [:index]
     resources "/options", OptionController, only: [:index]

@@ -2,10 +2,8 @@ defmodule Hello.OptionService do
 
   import Ecto.Query, warn: false
 
+  alias Hello.Catalog.{Item, Option, OptionSearch}
   alias Hello.Repo
-  alias Hello.Catalog.Item
-  alias Hello.Catalog.Option
-  alias Hello.Catalog.OptionSearch
 
   @spec option_create(:invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}) ::
           any

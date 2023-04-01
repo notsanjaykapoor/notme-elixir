@@ -2,12 +2,8 @@ defmodule Hello.ProductService do
 
   import Ecto.Query, warn: false
 
+  alias Hello.Catalog.{Item, Option, Product, ProductSearch}
   alias Hello.Repo
-  alias Hello.Catalog.Item
-  alias Hello.Catalog.Option
-  alias Hello.Catalog.Product
-  alias Hello.Catalog.ProductSearch
-
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking product changes.

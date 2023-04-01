@@ -2,10 +2,8 @@ defmodule Hello.MerchantService do
 
   import Ecto.Query, warn: false
 
+  alias Hello.Catalog.{Merchant, MerchantSearch, Product}
   alias Hello.Repo
-  alias Hello.Catalog.Merchant
-  alias Hello.Catalog.Product
-  alias Hello.Catalog.MerchantSearch
 
   def merchant_create(attrs \\ %{}) do
     %Merchant{}
