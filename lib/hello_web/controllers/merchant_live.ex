@@ -3,6 +3,7 @@ defmodule HelloWeb.MerchantLive do
   # use Phoenix.LiveView
 
   alias Hello.{ItemService, MerchantService}
+  alias HelloWebApp.Presence
 
   # def render(assigns) do
   #   ~H"""
@@ -11,6 +12,15 @@ defmodule HelloWeb.MerchantLive do
   #   """
   # end
 
+  @spec handle_event(
+          <<_::48>>,
+          any,
+          atom
+          | %{
+              :assigns => atom | %{:merchant => atom | map, optional(any) => any},
+              optional(any) => any
+            }
+        ) :: {:noreply, atom | %{:assigns => atom | map, optional(any) => any}}
   def handle_event("update", _value, socket) do
     merchant = socket.assigns.merchant
 
@@ -42,19 +52,43 @@ defmodule HelloWeb.MerchantLive do
     {:noreply, socket}
   end
 
+  def handle_info(%Phoenix.Socket.Broadcast{event: "presence_diff", payload: payload, topic: topic} = _params, socket) do
+    merchant = socket.assigns.merchant
+    user_id = socket.assigns.user_id
+
+    user_joins_count = length(Map.keys(payload.joins))
+    user_leaves_count = length(Map.keys(payload.leaves))
+
+    users_online =_merchant_presence_list(topic)
+
+    IO.puts "user #{user_id} merchant #{merchant.id} presence_diff - joins #{user_joins_count} leaves #{user_leaves_count} ids online #{Enum.join(users_online, ",")}"
+
+    socket = assign(socket, :users_online, users_online)
+
+    {:noreply, socket}
+  end
+
   @spec mount(map, any, Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(%{"merchant_id" => merchant_id} = _params, session, socket) do
     items = ItemService.items_list(%{"query" => "merchants:#{merchant_id}"})
     merchant = MerchantService.merchant_get!(merchant_id)
 
-    user_handle = Map.get(session, "user_handle")
-    user_id = Map.get(session, "user_id")
+    user_handle = Map.get(session, "user_handle", "guest")
+    user_id = Map.get(session, "user_id", 0)
 
-    IO.puts "user #{user_id} merchant #{merchant_id} mount"
+    topic = _merchant_topic(merchant.id)
+
+    IO.puts "user #{user_handle} merchant #{merchant_id} mount"
 
     if connected?(socket) do
-      IO.puts "user #{user_id} merchant #{merchant_id} subscribe"
-      _merchant_subscribe(merchant_id)
+      IO.puts "user #{user_id} topic #{topic} subscribe"
+
+      _merchant_subscribe(topic)
+
+      if user_id != 0 do
+        IO.puts "user #{user_id} topic #{topic} presence"
+        _merchant_presence_online(topic, user_id, user_handle)
+      end
     end
 
     socket = socket
@@ -62,13 +96,39 @@ defmodule HelloWeb.MerchantLive do
     |> stream(:items, items)
     |> assign(:user_handle, user_handle)
     |> assign(:user_id, user_id)
+    |> assign(:users_online, _merchant_presence_list(topic))
 
     {:ok, socket}
   end
 
-  defp _merchant_subscribe(merchant_id) do
-    Phoenix.PubSub.subscribe(Hello.PubSub, "merchant:#{merchant_id}")
-    # HelloWeb.Endpoint.subscribe("merchant:#{merchant.id}")
+  defp _merchant_presence_online(topic, user_id, user_handle) do
+    {:ok, _} = Presence.track(
+      self(),
+      topic,
+      user_id,
+      %{
+        online_at: inspect(System.system_time(:second)),
+        user_handle: user_handle,
+      }
+    )
+  end
+
+  defp _merchant_presence_list(topic) do
+    presence_keys = Map.keys(Presence.list(topic))
+
+    Enum.sort(
+      Map.keys(
+        Enum.reduce(presence_keys, %{}, fn user_id, acc -> Map.put(acc, String.to_integer(user_id), String.to_integer(user_id)) end)
+      )
+    )
+  end
+
+  defp _merchant_subscribe(topic) do
+    Phoenix.PubSub.subscribe(Hello.PubSub, topic)
+  end
+
+  defp _merchant_topic(merchant_id) do
+    "merchant:#{merchant_id}"
   end
 
 end

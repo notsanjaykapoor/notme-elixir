@@ -16,11 +16,12 @@ defmodule Hello.Application do
       {Phoenix.PubSub, name: Hello.PubSub},
       # Start Finch
       {Finch, name: Hello.Finch},
+      # Start presence after pubsub and before endpoint
+      HelloWebApp.Presence,
       # Start the Endpoint (http/https)
       HelloWeb.Endpoint,
       # Start a worker by calling: Hello.Worker.start_link(arg)
       # {Hello.Worker, arg}
-      # {HelloWeb.UserTracker, [pool_size: :erlang.system_info(:schedulers_online)]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
