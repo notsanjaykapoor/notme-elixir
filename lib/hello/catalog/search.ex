@@ -3,11 +3,6 @@ defmodule Hello.Catalog.Search do
   The Catalog Search context.
   """
 
-  alias Hello.Catalog.Option
-  alias Hello.Repo
-
-  import Ecto.Query
-
   def search_clauses(search_query) do
     clauses = Regex.scan(~r/([a-z_~]+):\s*([a-z-0-9,]+)/, search_query)
 

@@ -28,4 +28,5 @@
   <:col :let={option} label="# items">
     <.link class="font-bold text-blue-800" navigate={~p"/items?query=options:#{option.id}"}><%= option.items_count %></.link>
   </:col>
+  <:col :let={option} label="id"><%= option.id %></:col>
 </.table>

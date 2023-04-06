@@ -20,9 +20,10 @@
 <.table id="items" rows={@items}>
   <:col :let={item} label="name"><%= item.name %></:col>
   <:col :let={item} label="sku"><%= item.sku %></:col>
-  <:col :let={item} label="price"><%= item.price %></:col>
+  <:col :let={item} label="price"><%= item.price/100 %></:col>
   <:col :let={item} label="tags"><%= Enum.join(item.tags, ",") %></:col>
   <:col :let={item} label="qavail"><%= item.qavail %></:col>
+  <:col :let={item} label="qsold"><%= item.qsold %></:col>
   <:col :let={item} label="lot"><%= item.lot_id %></:col>
   <:col :let={item} label="option id">
     <span class="text-slate-500"><%= item.option_id %></span>
@@ -33,4 +34,5 @@
   <:col :let={item} label="merchant id">
     <.link class="font-bold text-blue-800" navigate={~p"/merchants?query=id:#{item.merchant_id}"}><%= item.merchant_id %></.link>
   </:col>
+  <:col :let={item} label="id"><%= item.id %></:col>
 </.table>

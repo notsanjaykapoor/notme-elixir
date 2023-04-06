@@ -7,6 +7,9 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
+redpanda_host = Application.fetch_env!(:hello, :redpanda_host)
+redpanda_port = Application.fetch_env!(:hello, :redpanda_port)
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server
@@ -113,3 +116,22 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
+
+# Kafka consumer
+config :kaffe,
+  consumer: [
+    consumer_group: Application.fetch_env!(:hello, :redpanda_topic_group),
+    endpoints: ["#{redpanda_host}": redpanda_port],
+    max_bytes: 500_000,
+    message_handler: Hello.MessageConsumer,
+    offset_reset_policy: :reset_to_latest,
+    topics: Application.fetch_env!(:hello, :redpanda_topics),
+    worker_allocation_strategy: :worker_per_topic_partition,
+  ]
+
+# Kafka producer
+config :kaffe,
+  producer: [
+    endpoints: ["#{redpanda_host}": redpanda_port],
+    topics: Application.fetch_env!(:hello, :redpanda_topics),
+  ]

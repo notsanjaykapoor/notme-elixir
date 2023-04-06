@@ -5,6 +5,9 @@ defmodule Hello.OptionService do
   alias Hello.Catalog.{Item, Option, OptionSearch}
   alias Hello.Repo
 
+  @pkg_sizes_all ["1g", "3g", "5g", "7g"]
+  @pkg_counts_all [1, 5, 12, 20]
+
   @spec option_create(:invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}) ::
           any
   def option_create(attrs \\ %{}) do
@@ -15,6 +18,14 @@ defmodule Hello.OptionService do
 
   def option_get_by_pkg(pkg_size, pkg_count) do
     Repo.get_by(Option, [pkg_size: pkg_size, pkg_count: pkg_count])
+  end
+
+  def option_pkg_counts_random(count) do
+    Enum.take_random(@pkg_counts_all, count)
+  end
+
+  def option_pkg_sizes_random(count) do
+    Enum.take_random(@pkg_sizes_all, count)
   end
 
   def options_list(params \\ %{}) do

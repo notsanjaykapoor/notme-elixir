@@ -2,7 +2,7 @@ defmodule Hello.ItemService do
 
   import Ecto.Query, warn: false
 
-  alias Hello.Catalog.{Item, ItemSearch}
+  alias Hello.Catalog.{Item, ItemSearch, Location, Option, Product}
   alias Hello.Repo
 
   @doc """
@@ -34,6 +34,21 @@ defmodule Hello.ItemService do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def item_create_props(%Product{} = product, %Option{} = option, %Location{} = location) do
+    item_name = "#{product.name} - #{option.pkg_size} - #{option.pkg_count} count"
+    item_price = product.price + :rand.uniform(1000)
+    item_sku = "#{String.downcase(String.slice(product.name, 0..2))}-#{option.pkg_size}-#{option.pkg_count}"
+
+    lot_id = "#{location.slug}-#{String.downcase(String.slice(ExULID.ULID.generate(), 21..-1))}"
+
+    %{
+      item_name: item_name,
+      item_price: item_price,
+      item_sku: item_sku,
+      lot_id: lot_id,
+    }
   end
 
   @doc """

@@ -32,3 +32,10 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Redpanda
+
+config :hello, :redpanda_host, "redpanda-tst"
+config :hello, :redpanda_port, 9092
+config :hello, :redpanda_topics, ["elixir-tst"]
+config :hello, :redpanda_topic_group, "group-0"

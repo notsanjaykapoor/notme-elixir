@@ -92,6 +92,6 @@ defmodule Hello.Catalog.ItemSearch do
   end
 
   def _query_sort(query) do
-    order_by(query, [o], o.id)
+    order_by(query, [o], [desc: o.id])
   end
 end

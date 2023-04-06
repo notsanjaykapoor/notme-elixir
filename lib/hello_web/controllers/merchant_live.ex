@@ -12,39 +12,43 @@ defmodule HelloWeb.MerchantLive do
   #   """
   # end
 
-  @spec handle_event(
-          <<_::48>>,
-          any,
-          atom
-          | %{
-              :assigns => atom | %{:merchant => atom | map, optional(any) => any},
-              optional(any) => any
-            }
-        ) :: {:noreply, atom | %{:assigns => atom | map, optional(any) => any}}
-  def handle_event("update", _value, socket) do
+  def handle_event("order_add", _value, socket) do
     merchant = socket.assigns.merchant
 
-    IO.puts "merchant #{merchant.id} handle_event:update"
+    IO.puts "merchant #{merchant.id} handle_event:order_add"
 
-    # get item and update qavail
+    # get random items
     items = ItemService.items_list(%{"query" => "merchants:#{merchant.id} sort:random", "limit" => 10})
 
+    # update item qavail
     for item <- items do
       item = ItemService.item_get!(item.id)
       ItemService.item_update(item, %{qavail: item.qavail - 1}) # decrement quantity
       # ItemService.item_update(item, %{qavail: item.qavail - :rand.uniform(3)}) # random quantity updates
 
-      Phoenix.PubSub.broadcast(Hello.PubSub, "merchant:#{merchant.id}", %{event: "item_update", id: item.id})
+      Phoenix.PubSub.broadcast(Hello.PubSub, _merchant_topic(merchant.id), %{event: "order_add", id: item.id})
     end
 
     {:noreply, socket}
   end
 
-  def handle_info(%{event: "item_update", id: id} = _params, socket) do
+  def handle_info(%{event: "item_add", id: id} = _params, socket) do
     merchant = socket.assigns.merchant
-    user_id = socket.assigns.user_id
+    user_handle = socket.assigns.user_handle
 
-    IO.puts "user #{user_id} merchant #{merchant.id} item_update #{id}"
+    IO.puts "user #{user_handle} merchant #{merchant.id} item_add #{id}"
+
+    item = ItemService.item_get!(id)
+    socket = stream_insert(socket, :items, item, at: 0)
+
+    {:noreply, socket}
+  end
+
+  def handle_info(%{event: "order_add", id: id} = _params, socket) do
+    merchant = socket.assigns.merchant
+    user_handle = socket.assigns.user_handle
+
+    IO.puts "user #{user_handle} merchant #{merchant.id} order_add #{id}"
 
     item = ItemService.item_get!(id)
     socket = stream_insert(socket, :items, item)
@@ -54,14 +58,14 @@ defmodule HelloWeb.MerchantLive do
 
   def handle_info(%Phoenix.Socket.Broadcast{event: "presence_diff", payload: payload, topic: topic} = _params, socket) do
     merchant = socket.assigns.merchant
-    user_id = socket.assigns.user_id
+    user_handle = socket.assigns.user_handle
 
     user_joins_count = length(Map.keys(payload.joins))
     user_leaves_count = length(Map.keys(payload.leaves))
 
-    users_online =_merchant_presence_list(topic)
+    users_online = _merchant_presence_list(topic)
 
-    IO.puts "user #{user_id} merchant #{merchant.id} presence_diff - joins #{user_joins_count} leaves #{user_leaves_count} ids online #{Enum.join(users_online, ",")}"
+    IO.puts "user #{user_handle} merchant #{merchant.id} presence_diff - joins #{user_joins_count} leaves #{user_leaves_count} ids online #{Enum.join(users_online, ",")}"
 
     socket = assign(socket, :users_online, users_online)
 
@@ -70,6 +74,7 @@ defmodule HelloWeb.MerchantLive do
 
   @spec mount(map, any, Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(%{"merchant_id" => merchant_id} = _params, session, socket) do
+    # authenticated route
     items = ItemService.items_list(%{"query" => "merchants:#{merchant_id}"})
     merchant = MerchantService.merchant_get!(merchant_id)
 
@@ -81,34 +86,31 @@ defmodule HelloWeb.MerchantLive do
     IO.puts "user #{user_handle} merchant #{merchant_id} mount"
 
     if connected?(socket) do
-      IO.puts "user #{user_id} topic #{topic} subscribe"
+      IO.puts "user #{user_handle} topic #{topic} subscribe"
 
       _merchant_subscribe(topic)
 
-      if user_id != 0 do
-        IO.puts "user #{user_id} topic #{topic} presence"
-        _merchant_presence_online(topic, user_id, user_handle)
-      end
+      IO.puts "user #{user_handle} topic #{topic} presence"
+      _merchant_presence_online(topic, user_handle)
     end
 
     socket = socket
     |> assign(:merchant, merchant)
-    |> stream(:items, items)
     |> assign(:user_handle, user_handle)
     |> assign(:user_id, user_id)
     |> assign(:users_online, _merchant_presence_list(topic))
+    |> stream(:items, items)
 
     {:ok, socket}
   end
 
-  defp _merchant_presence_online(topic, user_id, user_handle) do
+  defp _merchant_presence_online(topic, user_handle) do
     {:ok, _} = Presence.track(
       self(),
       topic,
-      user_id,
+      user_handle,
       %{
         online_at: inspect(System.system_time(:second)),
-        user_handle: user_handle,
       }
     )
   end
@@ -118,7 +120,7 @@ defmodule HelloWeb.MerchantLive do
 
     Enum.sort(
       Map.keys(
-        Enum.reduce(presence_keys, %{}, fn user_id, acc -> Map.put(acc, String.to_integer(user_id), String.to_integer(user_id)) end)
+        Enum.reduce(presence_keys, %{}, fn user_handle, acc -> Map.put(acc, user_handle, user_handle) end)
       )
     )
   end

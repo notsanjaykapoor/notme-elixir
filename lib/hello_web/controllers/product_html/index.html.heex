@@ -40,6 +40,7 @@
   <:col :let={product} label="merchant id">
     <.link class="font-bold text-blue-800" navigate={~p"/merchants?query=merchant:#{product.merchant_id}"}><%= product.merchant_id %></.link>
   </:col>
+  <:col :let={product} label="id"><%= product.id %></:col>
   <!--
   <:action :let={product}>
     <div class="sr-only">

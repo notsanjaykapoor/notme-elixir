@@ -1,6 +1,8 @@
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
+  alias HelloWeb.{PlugAuthInit, PlugUserAuthenticated, PlugUserGuest}
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,26 +10,42 @@ defmodule HelloWeb.Router do
     plug :put_root_layout, {HelloWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug HelloWeb.PlugAuth
+    plug PlugAuthInit
   end
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
+  # routes that require authenticated user
   scope "/", HelloWeb do
-    pipe_through :browser
+    pipe_through [:browser, PlugUserAuthenticated]
+
+    live "/merchants/:merchant_id/live", MerchantLive
+    live "/redpanda/live", RedpandaLive
+  end
+
+  # routes that require guest user
+  scope "/", HelloWeb do
+    pipe_through [:browser, PlugUserGuest]
+
+    get "/login", LoginController, :new
+    post "/session", LoginController, :create
+  end
+
+  # routes that are open to any user
+  scope "/", HelloWeb do
+    pipe_through [:browser]
 
     get "/hello/:messenger", HelloController, :show
     get "/hello", HelloController, :index
 
     resources "/items", ItemController, only: [:index]
-    get "/login", PageController, :login
-    get "/logout", PageController, :logout
-    live "/merchants/:merchant_id/stream", MerchantLive
     resources "/merchants", MerchantController, only: [:index]
     resources "/options", OptionController, only: [:index]
     resources "/products", ProductController
+
+    get "/logout", PageController, :logout
 
     get "/", PageController, :home
   end

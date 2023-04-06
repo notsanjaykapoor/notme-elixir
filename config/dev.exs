@@ -78,3 +78,10 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Redpanda
+
+config :hello, :redpanda_host, "redpanda-dev"
+config :hello, :redpanda_port, 9092
+config :hello, :redpanda_topics, ["elixir-dev"]
+config :hello, :redpanda_topic_group, "group-0"

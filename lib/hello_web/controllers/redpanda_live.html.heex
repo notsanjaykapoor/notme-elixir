@@ -1,0 +1,20 @@
+<div class="container grid grid-cols-10">
+  <span class="col-span-7 font-bold inline-block text">
+    Redpanda Messages
+  </span>
+
+  <span class="col-span-3 inline-block text text-xs">
+    <a class="float-right font-bold text-blue-800" href="#" phx-click="order_add" phx-value-merchant_id="1">
+      order-add
+    </a>
+    <a class="float-right font-bold px-3 text-blue-800" href="#" phx-click="item_add" phx-value-merchant_id="1">
+      item-add
+    </a>
+  </span>
+</div>
+
+<.table id="messages" rows={@streams.messages}>
+  <:col :let={{_id, message}} label="event"><%= message.event %></:col>
+  <:col :let={{_id, message}} label="merchant"><%= message.merchant_id %></:col>
+  <:col :let={{_id, message}} label="item"><%= message.id %></:col>
+</.table>

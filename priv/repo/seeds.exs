@@ -12,17 +12,12 @@
 
 import Ecto.Query
 
-alias Hello.OptionService
 alias Hello.Catalog.Item
 alias Hello.Catalog.Location
 alias Hello.Catalog.Merchant
 alias Hello.Catalog.Option
 alias Hello.Catalog.Product
-alias Hello.ItemService
-alias Hello.LocationService
-alias Hello.MerchantService
-alias Hello.OptionService
-alias Hello.ProductService
+alias Hello.{ItemService, LocationService, MerchantService, OptionService, ProductService}
 alias Hello.Repo
 
 Faker.start()
@@ -46,9 +41,6 @@ end
 
 locations = Repo.all(from o in Location)
 
-pkg_sizes_all = ["1g", "3g", "5g"]
-pkg_counts_all = [1, 5, 12]
-
 for merchant <- merchants do
   for _id <- Enum.to_list(1..10) do
     product_name = Faker.Superhero.name()
@@ -59,8 +51,8 @@ for merchant <- merchants do
 
     if length(options) == 0 do
       # initialize product options
-      pkg_sizes = Enum.take_random(pkg_sizes_all, 2)
-      pkg_counts = Enum.take_random(pkg_counts_all, 2)
+      pkg_sizes = OptionService.option_pkg_sizes_random(2)
+      pkg_counts = OptionService.option_pkg_counts_random(2)
 
       for id <- Enum.to_list(1..2) do
         pkg_size = Enum.at(pkg_sizes, id-1)
@@ -76,16 +68,16 @@ for merchant <- merchants do
     if length(items) == 0 do
       # initialize items
       for option <- options do
-        location = Enum.random(locations)
-
-        # lot shortcut
-        lot_id = "#{location.slug}-#{String.downcase(String.slice(ExULID.ULID.generate(), 21..-1))}"
-
         product = ProductService.product_get!(option.product_id)
 
-        item_name = "#{product.name} - #{option.pkg_size} - #{option.pkg_count} count"
-        item_price = product.price + :rand.uniform(1000)
-        item_sku = "#{String.downcase(String.slice(product.name, 0..2))}-#{option.pkg_size}-#{option.pkg_count}"
+        location = Enum.random(locations)
+
+        %{
+          item_name: item_name,
+          item_price: item_price,
+          item_sku: item_sku,
+          lot_id: lot_id,
+        } = ItemService.item_create_props(product, option, location)
 
         {:ok, _} = ItemService.item_create(%{
             loc_name: location.slug,
