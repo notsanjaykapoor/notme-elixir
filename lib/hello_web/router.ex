@@ -40,12 +40,12 @@ defmodule HelloWeb.Router do
     get "/hello/:messenger", HelloController, :show
     get "/hello", HelloController, :index
 
+    get "/logout", LogoutController, :index
+
     resources "/items", ItemController, only: [:index]
     resources "/merchants", MerchantController, only: [:index]
     resources "/options", OptionController, only: [:index]
     resources "/products", ProductController
-
-    get "/logout", PageController, :logout
 
     get "/", PageController, :home
   end

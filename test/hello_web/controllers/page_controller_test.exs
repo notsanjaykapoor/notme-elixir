@@ -3,6 +3,7 @@ defmodule HelloWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Peace of mind from prototype to production"
+    assert redirected_to(conn) == ~p"/merchants"
+    # assert html_response(conn, 200) =~ "Peace of mind from prototype to production"
   end
 end
