@@ -9,7 +9,12 @@ defmodule Hello.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: [
+        hello: [
+          applications: [opentelemetry: :temporary]
+        ]
+      ],
     ]
   end
 
@@ -54,6 +59,10 @@ defmodule Hello.MixProject do
       {:ex_ulid, "~> 0.1.0"},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:kaffe, "~> 1.0"},
+      {:opentelemetry_exporter, "~> 1.3"}, # add this before other opentelemetry libs
+      {:opentelemetry, "~> 1.2"},
+      {:opentelemetry_api, "~> 1.2"},
+      {:opentelemetry_phoenix, "~> 1.0"},
     ]
   end
 

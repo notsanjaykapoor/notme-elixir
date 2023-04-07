@@ -1,11 +1,11 @@
 <div class="container grid grid-cols-10">
-  <span class="col-span-7 font-bold inline-block text">
+  <span class="col-span-7 font-bold inline-block text-sm">
     Merchant '<%= @merchant.name %>' Stream
   </span>
   <span class="col-span-3 inline-block text text-xs">
-    <button class="float-right" phx-click="order_add">
-      <Heroicons.pencil solid class="w-4 h-4 text-indigo-700"/>
-    </button>
+    <a class="float-right font-bold text-blue-800" href="/redpanda/live" target="_blank">
+      msg-push
+    </a>
   </span>
 
   <span class="col-span-7 py-2 font-semibold inline-block text-orange-600 text-xs">

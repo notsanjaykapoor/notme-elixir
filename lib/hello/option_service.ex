@@ -5,6 +5,8 @@ defmodule Hello.OptionService do
   alias Hello.Catalog.{Item, Option, OptionSearch}
   alias Hello.Repo
 
+  require OpenTelemetry.Tracer, as: Tracer
+
   @pkg_sizes_all ["1g", "3g", "5g", "7g"]
   @pkg_counts_all [1, 5, 12, 20]
 
@@ -29,18 +31,22 @@ defmodule Hello.OptionService do
   end
 
   def options_list(params \\ %{}) do
-    query_params = Map.get(params, "query", "")
-    query_limit = Map.get(params, "limit", 50)
-    query_offset = Map.get(params, "offset", 0)
+    Tracer.with_span("option_service.options_list") do
+      query_params = Map.get(params, "query", "")
+      query_limit = Map.get(params, "limit", 50)
+      query_offset = Map.get(params, "offset", 0)
 
-    options = OptionSearch.search(query_params, query_limit, query_offset)
+      Tracer.set_attributes([{:query_params, query_params}])
 
-    options = for option <- options do
-      items_count = Repo.one(from v in Item, where: v.option_id == ^option.id, select: count("*"))
-      %{option | items_count: items_count}
+      options = OptionSearch.search(query_params, query_limit, query_offset)
+
+      options = for option <- options do
+        items_count = Repo.one(from v in Item, where: v.option_id == ^option.id, select: count("*"))
+        %{option | items_count: items_count}
+      end
+
+      options
     end
-
-    options
   end
 
 end

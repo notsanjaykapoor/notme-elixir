@@ -5,6 +5,8 @@ defmodule Hello.MerchantService do
   alias Hello.Catalog.{Merchant, MerchantSearch, Product}
   alias Hello.Repo
 
+  require OpenTelemetry.Tracer, as: Tracer
+
   def merchant_create(attrs \\ %{}) do
     %Merchant{}
     |> Merchant.changeset(attrs)
@@ -35,18 +37,22 @@ defmodule Hello.MerchantService do
   end
 
   def merchants_list(params \\ %{}) do
-    query_params = Map.get(params, "query", "")
-    query_limit = Map.get(params, "limit", 50)
-    query_offset = Map.get(params, "offset", 0)
+    Tracer.with_span("merchant_service.merchants_list") do
+      query_params = Map.get(params, "query", "")
+      query_limit = Map.get(params, "limit", 50)
+      query_offset = Map.get(params, "offset", 0)
 
-    merchants = MerchantSearch.search(query_params, query_limit, query_offset)
+      Tracer.set_attributes([{:query_params, query_params}])
 
-    merchants = for merchant <- merchants do
-      products_count = Repo.one(from o in Product, where: o.merchant_id == ^merchant.id, select: count("*"))
-      %{merchant | products_count: products_count}
+      merchants = MerchantSearch.search(query_params, query_limit, query_offset)
+
+      merchants = for merchant <- merchants do
+        products_count = Repo.one(from o in Product, where: o.merchant_id == ^merchant.id, select: count("*"))
+        %{merchant | products_count: products_count}
+      end
+
+      merchants
     end
-
-    merchants
   end
 
 end

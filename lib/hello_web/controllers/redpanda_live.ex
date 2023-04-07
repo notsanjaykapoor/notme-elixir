@@ -3,6 +3,8 @@ defmodule HelloWeb.RedpandaLive do
 
   alias Hello.ItemService
 
+  require OpenTelemetry.Tracer, as: Tracer
+
   def handle_event("item_add", %{"merchant_id" => merchant_id} = _value, socket) do
     user_handle = socket.assigns.user_handle
 
@@ -18,6 +20,7 @@ defmodule HelloWeb.RedpandaLive do
       socket, :messages, %{event: "item_add", id: ExULID.ULID.generate(), merchant_id: merchant_id, product_name: product_name}, at: 0
     )
 
+    socket = assign(socket, :messages_count, 1)
 
     Kaffe.Producer.produce_sync(_redpanda_topic(), messages)
 
@@ -42,28 +45,33 @@ defmodule HelloWeb.RedpandaLive do
       stream_insert(socket, :messages, %{event: "order_add", id: item.id, merchant_id: item.merchant_id}, at: 0)
     end)
 
+    socket = assign(socket, :messages_count, 1)
+
     Kaffe.Producer.produce_sync(_redpanda_topic(), messages)
 
     {:noreply, socket}
   end
 
   def mount(_params, session, socket) do
-    # authenticated route
-    user_handle = Map.get(session, "user_handle", "guest")
-    user_id = Map.get(session, "user_id", 0)
+    Tracer.with_span("redpanda_live_controller.mount") do
+      # authenticated route
+      user_handle = Map.get(session, "user_handle", "guest")
+      user_id = Map.get(session, "user_id", 0)
 
-    messages = []
+      messages = []
 
-    socket = socket
-    |> assign(:user_handle, user_handle)
-    |> assign(:user_id, user_id)
-    |> stream(:messages, messages)
+      socket = socket
+      |> assign(:user_handle, user_handle)
+      |> assign(:user_id, user_id)
+      |> stream(:messages, messages)
+      |> assign(:messages_count, length(messages))
 
-    {:ok, socket}
+      {:ok, socket}
+    end
   end
 
   def _redpanda_topic() do
-    [topic] = Application.fetch_env!(:redpanda, :topics)
+    [topic] = Application.fetch_env!(:hello, :redpanda_topics)
 
     topic
   end

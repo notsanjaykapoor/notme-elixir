@@ -33,9 +33,14 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
+# Opentelemetry
+
+config :hello, :otel_exporter_uri, "http://opentelemetrycollector-dev:4318"
+config :hello, :otel_service_name, "elixir-tst"
+
 # Redpanda
 
-config :hello, :redpanda_host, "redpanda-tst"
+config :hello, :redpanda_host, "redpanda-dev"
 config :hello, :redpanda_port, 9092
 config :hello, :redpanda_topics, ["elixir-tst"]
 config :hello, :redpanda_topic_group, "group-0"

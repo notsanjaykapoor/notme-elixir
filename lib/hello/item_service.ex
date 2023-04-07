@@ -5,6 +5,8 @@ defmodule Hello.ItemService do
   alias Hello.Catalog.{Item, ItemSearch, Location, Option, Product}
   alias Hello.Repo
 
+  require OpenTelemetry.Tracer, as: Tracer
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking item changes.
 
@@ -121,11 +123,15 @@ defmodule Hello.ItemService do
 
   """
   def items_list(params \\ %{}) do
-    query_params = Map.get(params, "query", "")
-    query_limit = Map.get(params, "limit", 100)
-    query_offset = Map.get(params, "offset", 0)
+    Tracer.with_span("items_service.items_list") do
+      query_params = Map.get(params, "query", "")
+      query_limit = Map.get(params, "limit", 100)
+      query_offset = Map.get(params, "offset", 0)
 
-    ItemSearch.search(query_params, query_limit, query_offset)
+      Tracer.set_attributes([{:query_params, query_params}])
+
+      ItemSearch.search(query_params, query_limit, query_offset)
+    end
   end
 
 end

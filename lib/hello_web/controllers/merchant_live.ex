@@ -1,9 +1,10 @@
 defmodule HelloWeb.MerchantLive do
   use HelloWeb, :live_view
-  # use Phoenix.LiveView
 
   alias Hello.{ItemService, MerchantService}
   alias HelloWebApp.Presence
+
+  require OpenTelemetry.Tracer, as: Tracer
 
   # def render(assigns) do
   #   ~H"""
@@ -74,34 +75,36 @@ defmodule HelloWeb.MerchantLive do
 
   @spec mount(map, any, Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(%{"merchant_id" => merchant_id} = _params, session, socket) do
-    # authenticated route
-    items = ItemService.items_list(%{"query" => "merchants:#{merchant_id}"})
-    merchant = MerchantService.merchant_get!(merchant_id)
+    Tracer.with_span("merchant_live_controller.mount") do
+      # authenticated route
+      items = ItemService.items_list(%{"query" => "merchants:#{merchant_id}"})
+      merchant = MerchantService.merchant_get!(merchant_id)
 
-    user_handle = Map.get(session, "user_handle", "guest")
-    user_id = Map.get(session, "user_id", 0)
+      user_handle = Map.get(session, "user_handle", "guest")
+      user_id = Map.get(session, "user_id", 0)
 
-    topic = _merchant_topic(merchant.id)
+      topic = _merchant_topic(merchant.id)
 
-    IO.puts "user #{user_handle} merchant #{merchant_id} mount"
+      IO.puts "user #{user_handle} merchant #{merchant_id} mount"
 
-    if connected?(socket) do
-      IO.puts "user #{user_handle} topic #{topic} subscribe"
+      if connected?(socket) do
+        IO.puts "user #{user_handle} topic #{topic} subscribe"
 
-      _merchant_subscribe(topic)
+        _merchant_subscribe(topic)
 
-      IO.puts "user #{user_handle} topic #{topic} presence"
-      _merchant_presence_online(topic, user_handle)
+        IO.puts "user #{user_handle} topic #{topic} presence"
+        _merchant_presence_online(topic, user_handle)
+      end
+
+      socket = socket
+      |> assign(:merchant, merchant)
+      |> assign(:user_handle, user_handle)
+      |> assign(:user_id, user_id)
+      |> assign(:users_online, _merchant_presence_list(topic))
+      |> stream(:items, items)
+
+      {:ok, socket}
     end
-
-    socket = socket
-    |> assign(:merchant, merchant)
-    |> assign(:user_handle, user_handle)
-    |> assign(:user_id, user_id)
-    |> assign(:users_online, _merchant_presence_list(topic))
-    |> stream(:items, items)
-
-    {:ok, socket}
   end
 
   defp _merchant_presence_online(topic, user_handle) do

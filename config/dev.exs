@@ -79,6 +79,11 @@ config :phoenix, :plug_init_mode, :runtime
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
+# Opentelemetry
+
+config :hello, :otel_exporter_uri, "http://opentelemetrycollector-dev:4318"
+config :hello, :otel_service_name, "elixir-dev"
+
 # Redpanda
 
 config :hello, :redpanda_host, "redpanda-dev"

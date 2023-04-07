@@ -117,7 +117,18 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
-# Kafka consumer
+# opentelemetry
+
+config :opentelemetry, :resource, service: %{name: Application.fetch_env!(:hello, :otel_service_name)}
+
+config :opentelemetry, :processors,
+    otel_batch_processor: %{
+      # exporter endpoint url
+      exporter: {:opentelemetry_exporter, %{endpoints: [Application.fetch_env!(:hello, :otel_exporter_uri)]}}
+    }
+
+# redpanda consumer
+
 config :kaffe,
   consumer: [
     consumer_group: Application.fetch_env!(:hello, :redpanda_topic_group),
@@ -129,7 +140,8 @@ config :kaffe,
     worker_allocation_strategy: :worker_per_topic_partition,
   ]
 
-# Kafka producer
+# redpanda producer
+
 config :kaffe,
   producer: [
     endpoints: ["#{redpanda_host}": redpanda_port],

@@ -5,6 +5,8 @@ defmodule Hello.ProductService do
   alias Hello.Catalog.{Item, Option, Product, ProductSearch}
   alias Hello.Repo
 
+  require OpenTelemetry.Tracer, as: Tracer
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking product changes.
 
@@ -90,30 +92,6 @@ defmodule Hello.ProductService do
   end
 
   @doc """
-  Returns the list of products.
-
-  ## Examples
-
-      iex> products_list()
-      [%Product{}, ...]
-
-  """
-  def products_list(params \\ %{}) do
-    query_params = Map.get(params, "query", "")
-    query_limit = Map.get(params, "limit", 50)
-    query_offset = Map.get(params, "offset", 0)
-
-    products = ProductSearch.search(query_params, query_limit, query_offset)
-    products = for product <- products do
-      options_count = Repo.one(from o in Option, where: o.product_id == ^product.id, select: count("*"))
-      items_count = Repo.one(from o in Item, where: o.product_id == ^product.id, select: count("*"))
-      %{product | options_count: options_count, items_count: items_count}
-    end
-
-    products
-  end
-
-  @doc """
   Updates a product.
 
   ## Examples
@@ -129,6 +107,34 @@ defmodule Hello.ProductService do
     product
     |> Product.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Returns the list of products.
+
+  ## Examples
+
+      iex> products_list()
+      [%Product{}, ...]
+
+  """
+  def products_list(params \\ %{}) do
+    Tracer.with_span("product_service.products_list") do
+      query_params = Map.get(params, "query", "")
+      query_limit = Map.get(params, "limit", 50)
+      query_offset = Map.get(params, "offset", 0)
+
+      Tracer.set_attributes([{:query_params, query_params}])
+
+      products = ProductSearch.search(query_params, query_limit, query_offset)
+      products = for product <- products do
+        options_count = Repo.one(from o in Option, where: o.product_id == ^product.id, select: count("*"))
+        items_count = Repo.one(from o in Item, where: o.product_id == ^product.id, select: count("*"))
+        %{product | options_count: options_count, items_count: items_count}
+      end
+
+      products
+    end
   end
 
 end

@@ -7,6 +7,8 @@ defmodule Hello.Application do
 
   @impl true
   def start(_type, _args) do
+    :ok = OpentelemetryPhoenix.setup()
+
     children = [
       # Start the Telemetry supervisor
       HelloWeb.Telemetry,
