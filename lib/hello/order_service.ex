@@ -1,10 +1,12 @@
 defmodule Hello.OrderService do
 
+  alias Hello.Catalog.Item
   alias Hello.ItemService
   alias Hello.Repo
 
   require OpenTelemetry.Tracer, as: Tracer
 
+  @spec order_create(integer) :: {:ok, Item}
   def order_create(item_id) do
     Tracer.with_span("order_service.order_create") do
       item = ItemService.item_get!(item_id)

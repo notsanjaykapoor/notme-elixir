@@ -3,6 +3,7 @@ defmodule Hello.Catalog.Search do
   The Catalog Search context.
   """
 
+  @spec search_clauses(String.t) :: {:ok, list}
   def search_clauses(search_query) do
     clauses = Regex.scan(~r/([a-z_~]+):\s*([a-z-0-9,]+)/, search_query)
 

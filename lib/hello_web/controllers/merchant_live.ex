@@ -13,25 +13,24 @@ defmodule HelloWeb.MerchantLive do
   #   """
   # end
 
-  def handle_event("order_add", _value, socket) do
-    merchant = socket.assigns.merchant
+  # def handle_event("order_add", _value, socket) do
+  #   merchant = socket.assigns.merchant
 
-    IO.puts "merchant #{merchant.id} handle_event:order_add"
+  #   IO.puts "merchant #{merchant.id} handle_event:order_add"
 
-    # get random items
-    items = ItemService.items_list(%{"query" => "merchants:#{merchant.id} sort:random", "limit" => 10})
+  #   # get random items
+  #   items = ItemService.items_list(%{"query" => "merchants:#{merchant.id} sort:random", "limit" => 10})
 
-    # update item qavail
-    for item <- items do
-      item = ItemService.item_get!(item.id)
-      ItemService.item_update(item, %{qavail: item.qavail - 1}) # decrement quantity
-      # ItemService.item_update(item, %{qavail: item.qavail - :rand.uniform(3)}) # random quantity updates
+  #   # update item qavail
+  #   for item <- items do
+  #     item = ItemService.item_get!(item.id)
+  #     ItemService.item_update(item, %{qavail: item.qavail - 1}) # decrement quantity
 
-      Phoenix.PubSub.broadcast(Hello.PubSub, _merchant_topic(merchant.id), %{event: "order_add", id: item.id})
-    end
+  #     Phoenix.PubSub.broadcast(Hello.PubSub, _merchant_topic(merchant.id), %{event: "order_add", id: item.id})
+  #   end
 
-    {:noreply, socket}
-  end
+  #   {:noreply, socket}
+  # end
 
   def handle_info(%{event: "item_add", id: id} = _params, socket) do
     merchant = socket.assigns.merchant
@@ -40,7 +39,10 @@ defmodule HelloWeb.MerchantLive do
     IO.puts "user #{user_handle} merchant #{merchant.id} item_add #{id}"
 
     item = ItemService.item_get!(id)
-    socket = stream_insert(socket, :items, item, at: 0)
+
+    socket = socket
+    |> stream_insert(:items, item, at: 0)
+    |> assign(:items_count, socket.assigns.items_count + 1)
 
     {:noreply, socket}
   end
@@ -97,6 +99,7 @@ defmodule HelloWeb.MerchantLive do
       end
 
       socket = socket
+      |> assign(:items_count, length(items))
       |> assign(:merchant, merchant)
       |> assign(:user_handle, user_handle)
       |> assign(:user_id, user_id)

@@ -9,6 +9,7 @@ defmodule Hello.Catalog.ItemSearch do
 
   import Ecto.Query
 
+  @spec search(String.t, integer, integer) :: Enum.Item
   def search(search_query, limit_, offset_) do
     {:ok, clauses} = Search.search_clauses(search_query)
 
@@ -20,14 +21,17 @@ defmodule Hello.Catalog.ItemSearch do
     |> Repo.all
   end
 
+  @spec _query_base() :: Ecto.Query.t()
   def _query_base() do
     from o in Item
   end
 
+  @spec _query_build(Ecto.Query.t(), list) :: Ecto.Query.t()
   def _query_build(query, clauses) do
     Enum.reduce(clauses, query, &_query_compose/2)
   end
 
+  @spec _query_compose(list, Ecto.Query.t()) :: Ecto.Query.t()
   def _query_compose([x, "lot", value], query) do
     _query_compose([x, "lots", value], query)
   end
@@ -91,6 +95,7 @@ defmodule Hello.Catalog.ItemSearch do
     where(query, [o], ^value not in o.tags)
   end
 
+  @spec _query_sort(Ecto.Query.t()) :: Ecto.Query.t()
   def _query_sort(query) do
     order_by(query, [o], [desc: o.id])
   end

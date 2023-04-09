@@ -54,6 +54,7 @@ defmodule Hello.ProductService do
     Repo.delete(product)
   end
 
+  @spec product_find_or_create(integer, String.t, integer) :: {:ok, Product}
   def product_find_or_create(merchant_id, name, price \\ :rand.uniform(10000)) do
     product = product_get_by_name(merchant_id, name)
 
@@ -118,6 +119,7 @@ defmodule Hello.ProductService do
       [%Product{}, ...]
 
   """
+  @spec products_list(map) :: list(Product)
   def products_list(params \\ %{}) do
     Tracer.with_span("product_service.products_list") do
       query_params = Map.get(params, "query", "")
@@ -126,15 +128,37 @@ defmodule Hello.ProductService do
 
       Tracer.set_attributes([{:query_params, query_params}])
 
+      product_option_map = _product_option_map()
+      product_item_map = _product_item_map()
+
       products = ProductSearch.search(query_params, query_limit, query_offset)
+
       products = for product <- products do
-        options_count = Repo.one(from o in Option, where: o.product_id == ^product.id, select: count("*"))
-        items_count = Repo.one(from o in Item, where: o.product_id == ^product.id, select: count("*"))
+        options_count = Map.get(product_option_map, product.id, 0)
+        items_count = Map.get(product_item_map, product.id, 0)
         %{product | options_count: options_count, items_count: items_count}
       end
 
       products
     end
+  end
+
+  defp _product_item_map() do
+    product_item_list = Item
+      |> select([o], {o.product_id, count(o.id)})
+      |> group_by([o], o.product_id)
+      |> Repo.all
+
+    Enum.into(product_item_list, %{})
+  end
+
+  defp _product_option_map() do
+    product_option_list = Option
+      |> select([o], {o.product_id, count(o.id)})
+      |> group_by([o], o.product_id)
+      |> Repo.all
+
+    Enum.into(product_option_list, %{})
   end
 
 end

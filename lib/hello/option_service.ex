@@ -38,15 +38,26 @@ defmodule Hello.OptionService do
 
       Tracer.set_attributes([{:query_params, query_params}])
 
+      option_item_map = _option_item_map()
+
       options = OptionSearch.search(query_params, query_limit, query_offset)
 
       options = for option <- options do
-        items_count = Repo.one(from v in Item, where: v.option_id == ^option.id, select: count("*"))
+        items_count = Map.get(option_item_map, option.id, 0)
         %{option | items_count: items_count}
       end
 
       options
     end
+  end
+
+  defp _option_item_map() do
+    option_item_list = Item
+      |> select([o], {o.option_id, count(o.id)})
+      |> group_by([o], o.option_id)
+      |> Repo.all
+
+    Enum.into(option_item_list, %{})
   end
 
 end

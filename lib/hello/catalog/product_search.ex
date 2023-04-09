@@ -20,6 +20,7 @@ defmodule Hello.Catalog.ProductSearch do
     |> Repo.all
   end
 
+  @spec _query_base() :: Ecto.Query.t()
   def _query_base() do
     from o in Product
   end
@@ -35,6 +36,7 @@ defmodule Hello.Catalog.ProductSearch do
   def _query_compose([_, "ids", value], query) do
     ids = String.split(value, ",")
       |> Enum.map(&String.to_integer/1)
+
     where(query, [o], o.id in ^ids)
   end
 
@@ -45,16 +47,18 @@ defmodule Hello.Catalog.ProductSearch do
   def _query_compose([_, "merchants", value], query) do
     ids = String.split(value, ",")
       |> Enum.map(&String.to_integer/1)
+
     where(query, [o], o.merchant_id in ^ids)
   end
 
   def _query_compose([_, "name", value], query) do
     value_normalized = String.trim(value)
       |> String.replace("-", " ")
+
     where(query, [o], ilike(o.name, ^"%#{value_normalized}%"))
   end
 
   def _query_sort(query) do
-    order_by(query, [o], o.id)
+    order_by(query, [o], [desc: o.id])
   end
 end

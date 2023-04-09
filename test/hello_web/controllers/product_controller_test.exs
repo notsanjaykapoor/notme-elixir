@@ -4,7 +4,7 @@ defmodule HelloWeb.ProductControllerTest do
   import Hello.MerchantServiceFixtures
   import Hello.ProductServiceFixtures
 
-  @create_attrs %{price: 12050, name: "some title", views: 42}
+  # @create_attrs %{price: 12050, name: "some title", views: 42}
   @update_attrs %{price: 45670, name: "some updated title", views: 43}
   @invalid_attrs %{price: nil, name: nil, views: nil}
 
