@@ -4,6 +4,7 @@ defmodule HelloWeb.MerchantLive do
   alias Hello.{ItemService, MerchantService}
   alias HelloWebApp.Presence
 
+  require Logger
   require OpenTelemetry.Tracer, as: Tracer
 
   # def render(assigns) do
@@ -36,7 +37,7 @@ defmodule HelloWeb.MerchantLive do
     merchant = socket.assigns.merchant
     user_handle = socket.assigns.user_handle
 
-    IO.puts "user #{user_handle} merchant #{merchant.id} item_add #{id}"
+    Logger.info("user #{user_handle} merchant #{merchant.id} item_add #{id}")
 
     item = ItemService.item_get!(id)
 
@@ -51,7 +52,7 @@ defmodule HelloWeb.MerchantLive do
     merchant = socket.assigns.merchant
     user_handle = socket.assigns.user_handle
 
-    IO.puts "user #{user_handle} merchant #{merchant.id} order_add #{id}"
+    Logger.info("user #{user_handle} merchant #{merchant.id} order_add #{id}")
 
     item = ItemService.item_get!(id)
     socket = stream_insert(socket, :items, item)
@@ -68,7 +69,9 @@ defmodule HelloWeb.MerchantLive do
 
     users_online = _merchant_presence_list(topic)
 
-    IO.puts "user #{user_handle} merchant #{merchant.id} presence_diff - joins #{user_joins_count} leaves #{user_leaves_count} ids online #{Enum.join(users_online, ",")}"
+    Logger.info(
+      "user #{user_handle} merchant #{merchant.id} presence_diff - joins #{user_joins_count} leaves #{user_leaves_count} online #{Enum.join(users_online, ",")}"
+    )
 
     socket = assign(socket, :users_online, users_online)
 
@@ -78,23 +81,23 @@ defmodule HelloWeb.MerchantLive do
   @spec mount(map, any, Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(%{"merchant_id" => merchant_id} = _params, session, socket) do
     Tracer.with_span("merchant_live_controller.mount") do
+      user_handle = Map.get(session, "user_handle", "guest")
+      user_id = Map.get(session, "user_id", 0)
+
       # authenticated route
       items = ItemService.items_list(%{"query" => "merchants:#{merchant_id}"})
       merchant = MerchantService.merchant_get!(merchant_id)
 
-      user_handle = Map.get(session, "user_handle", "guest")
-      user_id = Map.get(session, "user_id", 0)
-
       topic = _merchant_topic(merchant.id)
 
-      IO.puts "user #{user_handle} merchant #{merchant_id} mount"
+      Logger.info("user #{user_handle} merchant #{merchant_id} mount")
 
       if connected?(socket) do
-        IO.puts "user #{user_handle} topic #{topic} subscribe"
+        Logger.info("user #{user_handle} topic #{topic} subscribe")
 
         _merchant_subscribe(topic)
 
-        IO.puts "user #{user_handle} topic #{topic} presence"
+        Logger.info("user #{user_handle} topic #{topic} presence")
         _merchant_presence_online(topic, user_handle)
       end
 
@@ -122,13 +125,10 @@ defmodule HelloWeb.MerchantLive do
   end
 
   defp _merchant_presence_list(topic) do
-    presence_keys = Map.keys(Presence.list(topic))
-
-    Enum.sort(
-      Map.keys(
-        Enum.reduce(presence_keys, %{}, fn user_handle, acc -> Map.put(acc, user_handle, user_handle) end)
-      )
-    )
+    Map.keys(Presence.list(topic))
+    |> Enum.reduce(%{}, fn user_handle, acc -> Map.put(acc, user_handle, user_handle) end)
+    |> Map.keys()
+    |> Enum.sort()
   end
 
   defp _merchant_subscribe(topic) do

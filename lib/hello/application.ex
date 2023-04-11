@@ -23,6 +23,7 @@ defmodule Hello.Application do
       # Start the Endpoint (http/https)
       HelloWeb.Endpoint,
       # Start a worker by calling: Hello.Worker.start_link(arg)
+      HelloWeb.UserTracker,
       # {Hello.Worker, arg}
       # Kafka supervisor
       %{

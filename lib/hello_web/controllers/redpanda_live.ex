@@ -55,8 +55,8 @@ defmodule HelloWeb.RedpandaLive do
   def mount(_params, session, socket) do
     Tracer.with_span("redpanda_live_controller.mount") do
       # authenticated route
-      user_handle = Map.get(session, "user_handle", "guest")
-      user_id = Map.get(session, "user_id", 0)
+      user_handle = Map.get(session, "user_handle")
+      user_id = Map.get(session, "user_id")
 
       messages = []
 

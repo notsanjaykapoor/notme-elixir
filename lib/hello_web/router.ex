@@ -1,7 +1,7 @@
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
-  alias HelloWeb.{PlugAuthInit, PlugUserAuthenticated, PlugUserGuest}
+  alias HelloWeb.{PlugAuthInit, PlugUserAuthenticated, PlugUserGuest, PlugUserTrack}
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -19,10 +19,11 @@ defmodule HelloWeb.Router do
 
   # routes that require authenticated user
   scope "/", HelloWeb do
-    pipe_through [:browser, PlugUserAuthenticated]
+    pipe_through [:browser, PlugUserAuthenticated, PlugUserTrack]
 
     live "/merchants/:merchant_id/live", MerchantLive
     live "/redpanda/live", RedpandaLive
+    live "/user/live", UserLive
   end
 
   # routes that require guest user
@@ -35,7 +36,7 @@ defmodule HelloWeb.Router do
 
   # routes that are open to any user
   scope "/", HelloWeb do
-    pipe_through [:browser]
+    pipe_through [:browser, PlugUserTrack]
 
     get "/hello/:messenger", HelloController, :show
     get "/hello", HelloController, :index
