@@ -126,24 +126,3 @@ config :opentelemetry, :processors,
       # exporter endpoint url
       exporter: {:opentelemetry_exporter, %{endpoints: [Application.fetch_env!(:hello, :otel_exporter_uri)]}}
     }
-
-# redpanda consumer
-
-config :kaffe,
-  consumer: [
-    consumer_group: Application.fetch_env!(:hello, :redpanda_topic_group),
-    endpoints: ["#{redpanda_host}": redpanda_port],
-    max_bytes: 500_000,
-    message_handler: Hello.MessageConsumer,
-    offset_reset_policy: :reset_to_latest,
-    topics: Application.fetch_env!(:hello, :redpanda_topics),
-    worker_allocation_strategy: :worker_per_topic_partition,
-  ]
-
-# redpanda producer
-
-config :kaffe,
-  producer: [
-    endpoints: ["#{redpanda_host}": redpanda_port],
-    topics: Application.fetch_env!(:hello, :redpanda_topics),
-  ]

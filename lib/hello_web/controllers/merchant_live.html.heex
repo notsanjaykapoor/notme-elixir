@@ -2,11 +2,6 @@
   <span class="col-span-7 font-bold inline-block text-sm">
     Merchant '<%= @merchant.name %>' Stream
   </span>
-  <span class="col-span-3 inline-block text text-xs">
-    <a class="float-right font-bold text-indigo-700" href="/redpanda/live" target="_blank">
-      msg-push
-    </a>
-  </span>
   <span class="col-span-7 py-2 font-semibold inline-block text-pink-500 text-xs">
    Online Ids: <%= Enum.join(@users_online, ",") %>
   </span>

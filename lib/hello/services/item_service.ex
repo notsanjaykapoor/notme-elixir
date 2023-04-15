@@ -2,7 +2,7 @@ defmodule Hello.ItemService do
 
   import Ecto.Query, warn: false
 
-  alias Hello.Catalog.{Item, ItemSearch, Location, Option, Product}
+  alias Hello.Catalog.{Item, ItemSearch}
   alias Hello.Repo
 
   require OpenTelemetry.Tracer, as: Tracer
@@ -38,7 +38,7 @@ defmodule Hello.ItemService do
     |> Repo.insert()
   end
 
-  def item_create_props(%Product{} = product, %Option{} = option, %Location{} = location) do
+  def item_create_props(product, option, location) do
     item_name = "#{product.name} - #{option.pkg_size} - #{option.pkg_count} count"
     item_price = product.price + :rand.uniform(1000)
     item_sku = "#{String.downcase(String.slice(product.name, 0..2))}-#{option.pkg_size}-#{option.pkg_count}"

@@ -24,7 +24,7 @@ defmodule Hello.MixProject do
   def application do
     [
       mod: {Hello.Application, []},
-      extra_applications: [:logger, :runtime_tools, :kaffe]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -49,16 +49,16 @@ defmodule Hello.MixProject do
       {:phoenix_live_dashboard, "~> 0.7.2"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev},
-      {:swoosh, "~> 1.3"},
-      {:finch, "~> 0.13"},
+      {:swoosh, "~> 1.9"},
+      {:finch, "~> 0.15"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:ex_ulid, "~> 0.1.0"},
+      {:broadway_kafka, "~> 0.4"},
       {:faker, "~> 0.17", only: [:dev, :test]},
-      {:kaffe, "~> 1.0"},
       {:opentelemetry_exporter, "~> 1.3"}, # add this before other opentelemetry libs
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_api, "~> 1.2"},

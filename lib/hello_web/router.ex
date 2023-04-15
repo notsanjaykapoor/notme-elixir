@@ -22,7 +22,6 @@ defmodule HelloWeb.Router do
     pipe_through [:browser, PlugUserAuthenticated, PlugUserTrack]
 
     live "/merchants/:merchant_id/live", MerchantLive
-    live "/redpanda/live", RedpandaLive
     live "/user/live", UserLive
   end
 

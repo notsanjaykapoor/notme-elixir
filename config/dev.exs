@@ -89,4 +89,7 @@ config :hello, :otel_service_name, "elixir-dev"
 config :hello, :redpanda_host, "redpanda-dev"
 config :hello, :redpanda_port, 9092
 config :hello, :redpanda_topics, ["elixir-dev"]
-config :hello, :redpanda_topic_group, "group-0"
+config :hello, :redpanda_group_default, "group-0"
+
+config :hello, :redpanda_topic_inventory, "pipe-inventory-dev"
+config :hello, :redpanda_topic_simple, "pipe-simple-dev"
