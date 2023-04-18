@@ -24,26 +24,29 @@
       <a href="/items" class="px-2 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
         Items
       </a>
-      <a href="/user/live" class="px-2 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
-        Users
+      <a href="/nodes/live" class="px-2 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
+        Nodes
       </a>
     </div>
     <div class="flex items-center gap-4">
       <%= if @user_handle == "guest" do %>
-        <span class="font-semibold px-2 text-sky-500 text-xs">
+        <span class="font-semibold px-1 text-sky-500 text-xs">
           <%= @user_handle %>
         </span>
       <% else %>
-        <span class="font-semibold px-2 text-indigo-700 text-xs">
+        <span class="font-semibold px-1 text-indigo-700 text-xs">
           <%= @user_handle %>
         </span>
       <% end %>
       <%= if @user_handle == "guest" do %>
-        <a href="/login" class="px-2 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
+        <a href="/login" class="px-1 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
           Login
         </a>
       <% else %>
-        <a href="/logout" class="px-2 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
+        <a href="/user/live" class="px-1 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
+          Users
+        </a>
+        <a href="/logout" class="px-1 text-[0.8125rem] font-medium leading-6 text-brand hover:text-slate-800">
           Logout
         </a>
       <% end %>

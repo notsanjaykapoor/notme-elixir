@@ -117,6 +117,16 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
+# libcluster
+
+config :libcluster,
+    debug: false,
+    topologies: [
+      gossip: [
+        strategy: Cluster.Strategy.Gossip,
+      ]
+    ]
+
 # opentelemetry
 
 config :opentelemetry, :resource, service: %{name: Application.fetch_env!(:hello, :otel_service_name)}

@@ -9,6 +9,8 @@ defmodule Hello.Application do
   def start(_type, _args) do
     :ok = OpentelemetryPhoenix.setup()
 
+    topologies = Application.get_env(:libcluster, :topologies) || []
+
     children = [
       # Start the Telemetry supervisor
       HelloWeb.Telemetry,
@@ -28,6 +30,8 @@ defmodule Hello.Application do
       Hello.Pipeline.Inventory,
       Hello.Pipeline.Simple,
       # {Hello.Worker, arg}
+      # Clustering setup
+      {Cluster.Supervisor, [topologies, [name: Hello.ClusterSupervisor]]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

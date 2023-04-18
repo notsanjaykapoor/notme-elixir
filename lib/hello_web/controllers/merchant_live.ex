@@ -2,17 +2,11 @@ defmodule HelloWeb.MerchantLive do
   use HelloWeb, :live_view
 
   alias Hello.{ItemService, MerchantService}
+  alias HelloWeb.Session
   alias HelloWebApp.Presence
 
   require Logger
   require OpenTelemetry.Tracer, as: Tracer
-
-  # def render(assigns) do
-  #   ~H"""
-  #   test
-  #   <button phx-click="update">+</button>
-  #   """
-  # end
 
   # def handle_event("order_add", _value, socket) do
   #   merchant = socket.assigns.merchant
@@ -37,7 +31,7 @@ defmodule HelloWeb.MerchantLive do
     merchant = socket.assigns.merchant
     user_handle = socket.assigns.user_handle
 
-    Logger.info("user #{user_handle} merchant #{merchant.id} item_add #{id}")
+    Logger.info("controller 'merchant_live' user #{user_handle} merchant #{merchant.id} item_add #{id}")
 
     item = ItemService.item_get!(id)
 
@@ -52,7 +46,7 @@ defmodule HelloWeb.MerchantLive do
     merchant = socket.assigns.merchant
     user_handle = socket.assigns.user_handle
 
-    Logger.info("user #{user_handle} merchant #{merchant.id} order_add #{id}")
+    Logger.info("controller 'merchant_live' user #{user_handle} merchant #{merchant.id} order_add #{id}")
 
     item = ItemService.item_get!(id)
     socket = stream_insert(socket, :items, item)
@@ -70,7 +64,7 @@ defmodule HelloWeb.MerchantLive do
     users_online = _merchant_presence_list(topic)
 
     Logger.info(
-      "user #{user_handle} merchant #{merchant.id} presence_diff - joins #{user_joins_count} leaves #{user_leaves_count} online #{Enum.join(users_online, ",")}"
+      "controller 'merchant_live' user #{user_handle} merchant #{merchant.id} presence_diff - joins #{user_joins_count} leaves #{user_leaves_count} online #{Enum.join(users_online, ",")}"
     )
 
     socket = assign(socket, :users_online, users_online)
@@ -80,9 +74,8 @@ defmodule HelloWeb.MerchantLive do
 
   @spec mount(map, any, Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(%{"merchant_id" => merchant_id} = _params, session, socket) do
-    Tracer.with_span("merchant_live_controller.mount") do
-      user_handle = Map.get(session, "user_handle", "guest")
-      user_id = Map.get(session, "user_id", 0)
+    Tracer.with_span("controller.merchant_live.mount") do
+      {user_handle, user_id} = Session.user_handle_id(session)
 
       # authenticated route
       items = ItemService.items_list(%{"query" => "merchants:#{merchant_id}"})

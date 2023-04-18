@@ -4,12 +4,12 @@ defmodule HelloWeb.UserLive do
   require Logger
   require OpenTelemetry.Tracer, as: Tracer
 
-  alias HelloWeb.UserTracker
+  alias HelloWeb.{Session, UserTracker}
 
-  def handle_info(%{event: "users_online"} = _params, socket) do
-    Logger.info("user_live#handle_info users_online")
+  @channel_users_local "users_local"
 
-    {:ok, users_map} = UserTracker.users_list()
+  def handle_info(%{event: "users_online", users: users_map} = _params, socket) do
+    Logger.info("controller 'user_live' event 'users_online' #{inspect(users_map)}")
 
     users_online = users_map
     |> Map.keys()
@@ -22,17 +22,12 @@ defmodule HelloWeb.UserLive do
   end
 
   def mount(_params, session, socket) do
-    Tracer.with_span("user_live_controller.mount") do
+    Tracer.with_span("controller.user_live.mount") do
       # authenticated route
-      user_handle = Map.get(session, "user_handle")
-      user_id = Map.get(session, "user_id")
-
-      topic = "users"
+      {user_handle, user_id} = Session.user_handle_id(session)
 
       if connected?(socket) do
-        Logger.info("user #{user_handle} topic #{topic} subscribe")
-
-        _users_subscribe(topic)
+        Phoenix.PubSub.subscribe(Hello.PubSub, @channel_users_local)
       end
 
       {:ok, users_map} = UserTracker.users_list()
@@ -48,10 +43,6 @@ defmodule HelloWeb.UserLive do
 
       {:ok, socket}
     end
-  end
-
-  defp _users_subscribe(topic) do
-    Phoenix.PubSub.subscribe(Hello.PubSub, topic)
   end
 
 end

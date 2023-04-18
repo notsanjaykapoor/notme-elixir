@@ -59,6 +59,7 @@ defmodule Hello.MixProject do
       {:ex_ulid, "~> 0.1.0"},
       {:broadway_kafka, "~> 0.4"},
       {:faker, "~> 0.17", only: [:dev, :test]},
+      {:libcluster, "~> 3.3"},
       {:opentelemetry_exporter, "~> 1.3"}, # add this before other opentelemetry libs
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_api, "~> 1.2"},

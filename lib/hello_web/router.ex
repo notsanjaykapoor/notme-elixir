@@ -44,6 +44,7 @@ defmodule HelloWeb.Router do
 
     resources "/items", ItemController, only: [:index]
     resources "/merchants", MerchantController, only: [:index]
+    live "/nodes/live", NodeLive
     resources "/options", OptionController, only: [:index]
     resources "/products", ProductController
 
