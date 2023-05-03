@@ -26,13 +26,12 @@ defmodule Hello.Application do
       HelloWeb.Endpoint,
       # Start a worker by calling: Hello.Worker.start_link(arg)
       HelloWeb.UserTracker,
-      # Start broadway pipelines
-      Hello.Pipeline.Inventory,
-      Hello.Pipeline.Simple,
       # {Hello.Worker, arg}
       # Clustering setup
       {Cluster.Supervisor, [topologies, [name: Hello.ClusterSupervisor]]}
     ]
+
+    children = _config_pipelines(children)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -46,5 +45,14 @@ defmodule Hello.Application do
   def config_change(changed, _new, removed) do
     HelloWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def _config_pipelines(children) do
+    case String.to_integer(System.get_env("PIPELINES") || "0") do
+      1 ->
+        children ++ [Hello.Pipeline.Inventory, Hello.Pipeline.Simple]
+      _ ->
+        children
+    end
   end
 end
