@@ -20,7 +20,9 @@ defmodule Hello.CatalogTest do
 
       item = item_fixture(%{merchant_id: merchant.id, product_id: product.id, option_id: option.id})
 
-      assert ItemService.items_list() == [item]
+      item_page = ItemService.items_list()
+
+      assert item_page.objects == [item]
     end
 
     test "item_get!/1 returns the item with given id" do

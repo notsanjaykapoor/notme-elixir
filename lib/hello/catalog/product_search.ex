@@ -58,6 +58,10 @@ defmodule Hello.Catalog.ProductSearch do
     where(query, [o], ilike(o.name, ^"%#{value_normalized}%"))
   end
 
+  def _query_count(query) do
+    select(query, [o], count(o.id))
+  end
+
   def _query_sort(query) do
     order_by(query, [o], [desc: o.id])
   end

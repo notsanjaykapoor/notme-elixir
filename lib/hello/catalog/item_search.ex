@@ -3,22 +3,62 @@ defmodule Hello.Catalog.ItemSearch do
   The Catalog ItemSearch context.
   """
 
-  alias Hello.Catalog.Item
-  alias Hello.Catalog.Search
+  alias Hello.Catalog.{Item, Search, SearchPage}
   alias Hello.Repo
 
   import Ecto.Query
 
-  @spec search(String.t, integer, integer) :: Enum.Item
+  @spec search(String.t, integer, integer) :: SearchPage
+  @spec search(binary, number, number) :: %Hello.Catalog.SearchPage{
+          count: non_neg_integer,
+          limit: number,
+          objects: list,
+          offset: number,
+          offset_nxt: 0,
+          offset_prv: 0,
+          total: any
+        }
   def search(search_query, limit_, offset_) do
     {:ok, clauses} = Search.search_clauses(search_query)
 
-    _query_base()
+    query = _query_base()
     |> _query_build(clauses)
+
+    items = query
     |> _query_sort()
     |> limit(^limit_)
     |> offset(^offset_)
     |> Repo.all
+
+    total = query
+    |> _query_count()
+    |> Repo.one
+
+    %SearchPage{
+      count: length(items),
+      limit: limit_,
+      objects: items,
+      offset: offset_,
+      offset_nxt: _offset_next(offset_, limit_, total),
+      offset_prv: _offset_prev(offset_, limit_),
+      total: total,
+    }
+  end
+
+  def _offset_next(offset, limit, total) do
+    if (offset + limit) < total do
+      offset + limit
+    else
+      0
+    end
+  end
+
+  def _offset_prev(offset, limit) do
+    if (offset - limit) >= 0 do
+      offset - limit
+    else
+      -1
+    end
   end
 
   @spec _query_base() :: Ecto.Query.t()
@@ -86,6 +126,10 @@ defmodule Hello.Catalog.ItemSearch do
     order_by(query, [o], fragment("RANDOM()"))
   end
 
+  def _query_compose([x, "tag", value], query) do
+    _query_compose([x, "tags", value], query)
+  end
+
   def _query_compose([_, "tags", value], query) do
     tags_list = String.split(value, ",")
     where(query, [o], fragment("? && ?", ^tags_list, o.tags))
@@ -93,6 +137,10 @@ defmodule Hello.Catalog.ItemSearch do
 
   def _query_compose([_, "~tags", value], query) do
     where(query, [o], ^value not in o.tags)
+  end
+
+  def _query_count(query) do
+    select(query, [o], count(o.id))
   end
 
   @spec _query_sort(Ecto.Query.t()) :: Ecto.Query.t()

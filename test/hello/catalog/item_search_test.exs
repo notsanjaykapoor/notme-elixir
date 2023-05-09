@@ -24,26 +24,31 @@ defmodule Hello.Catalog.ItemSearchTest do
     })
 
     # matching query on single field
-    result = ItemSearch.search("search", 10, 0)
-    assert [%Item{} = item_] = result
+    item_page = ItemSearch.search("search", 10, 0)
+    assert [%Item{} = item_] = item_page.objects
     assert item_.id == item.id
+    assert 1 == item_page.total
 
     # matching query on multiple fields, name and tags
-    result = ItemSearch.search("name:search tags:tag-1,tax-xxx", 10, 0)
-    assert [%Item{} = item_] = result
+    item_page = ItemSearch.search("name:search tags:tag-1,tax-xxx", 10, 0)
+    assert [%Item{} = item_] = item_page.objects
     assert item_.id == item.id
+    assert 1 == item_page.total
 
     # matching query on multiple fields, name and price
-    result = ItemSearch.search("name:search price_gte:999", 10, 0)
-    assert [%Item{} = item_] = result
+    item_page = ItemSearch.search("name:search price_gte:999", 10, 0)
+    assert [%Item{} = item_] = item_page.objects
     assert item_.id == item.id
+    assert 1 == item_page.total
 
     # non-matching query on single field
-    result = ItemSearch.search("undefined", 10, 0)
-    assert [] = result
+    item_page = ItemSearch.search("undefined", 10, 0)
+    assert [] = item_page.objects
+    assert 0 == item_page.total
 
     # non-matching query on multiple fields
-    result = ItemSearch.search("name:search tags:xxx", 10, 0)
-    assert [] = result
+    item_page = ItemSearch.search("name:search tags:xxx", 10, 0)
+    assert [] = item_page.objects
+    assert 0 == item_page.total
   end
 end

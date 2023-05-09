@@ -1,7 +1,11 @@
 <.header>
   <div class="container grid grid-cols-10">
     <span class="col-span-7 font-bold inline-block text-sm">
-      Item Search Results : <%= length(@items) %>
+      <%= if @search_page.total > 0  do %>
+        Item Search Results : <%= @search_page.offset + 1 %> - <%= @search_page.offset + @search_page.count %> of <%= @search_page.total %>
+      <% else %>
+      Item Search Results : <%= @search_page.total %>
+      <% end %>
     </span>
     <span class="col-span-3">
       <%= form_for @conn, ~p"/items", [method: :get, autocomplete: "off"], fn f -> %>
@@ -17,7 +21,7 @@
   </div>
 </.header>
 
-<.table id="items" rows={@items}>
+<.table id="items" rows={@search_page.objects}>
   <:col :let={item} label="name"><%= item.name %></:col>
   <:col :let={item} label="sku"><%= item.sku %></:col>
   <:col :let={item} label="price"><%= item.price/100 %></:col>
@@ -36,3 +40,35 @@
   </:col>
   <:col :let={item} label="id"><%= item.id %></:col>
 </.table>
+
+<%= if !((@page_nxt == "#") && (@page_prv == "#")) do %>
+  <div class="inline-flex py-10 px-0">
+    <%= if @page_prv != "#" do %>
+      <a href={"#{@page_prv}"}>
+        <button class="bg-indigo-700 hover:bg-indigo-800 text-gray-200 font-bold py-2 px-4 rounded-l">
+          Prev
+        </button>
+      </a>
+    <% else %>
+      <a href={"#{@page_prv}"}>
+        <button class="bg-indigo-700 hover:bg-indigo-800 text-gray-200 font-bold py-2 px-4 rounded-l opacity-50 cursor-not-allowed">
+          Prev
+        </button>
+      </a>
+    <% end %>
+
+    <%= if @page_nxt != "#" do %>
+      <a href={"#{@page_nxt}"} class="px-3">
+        <button class="bg-indigo-700 hover:bg-indigo-800 text-gray-200 font-bold py-2 px-4 rounded-r">
+          Next
+        </button>
+      </a>
+    <% else %>
+      <a href={"#{@page_nxt}"} class="px-3">
+        <button class="bg-indigo-700 hover:bg-indigo-800 text-gray-200 font-bold py-2 px-4 rounded-r opacity-50 cursor-not-allowed">
+          Next
+        </button>
+      </a>
+    <% end %>
+  </div>
+<% end %>

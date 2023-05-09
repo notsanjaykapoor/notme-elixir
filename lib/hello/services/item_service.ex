@@ -7,6 +7,11 @@ defmodule Hello.ItemService do
 
   require OpenTelemetry.Tracer, as: Tracer
 
+  # defaults are string to match query param types
+  @limit_default "20"
+  @offset_default "0"
+
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking item changes.
 
@@ -125,8 +130,8 @@ defmodule Hello.ItemService do
   def items_list(params \\ %{}) do
     Tracer.with_span("items_service.items_list") do
       query_params = Map.get(params, "query", "")
-      query_limit = Map.get(params, "limit", 100)
-      query_offset = Map.get(params, "offset", 0)
+      query_limit = Map.get(params, "limit", @limit_default) |> String.to_integer
+      query_offset = Map.get(params, "offset", @offset_default)  |> String.to_integer
 
       Tracer.set_attributes([{:query_params, query_params}])
 
