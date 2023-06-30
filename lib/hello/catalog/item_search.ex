@@ -8,7 +8,6 @@ defmodule Hello.Catalog.ItemSearch do
 
   import Ecto.Query
 
-  @spec search(String.t, integer, integer) :: SearchPage
   @spec search(binary, number, number) :: %Hello.Catalog.SearchPage{
           count: non_neg_integer,
           limit: number,
@@ -78,7 +77,8 @@ defmodule Hello.Catalog.ItemSearch do
 
   def _query_compose([_, "lots", value], query) do
     ids = String.split(value, ",")
-      |> Enum.map(&String.to_integer/1)
+    |> Enum.map(&String.to_integer/1)
+
     where(query, [o], fragment("? && ?", ^ids, o.lot_ids))
   end
 
@@ -88,19 +88,24 @@ defmodule Hello.Catalog.ItemSearch do
 
   def _query_compose([_, "merchants", value], query) do
     ids = String.split(value, ",")
-      |> Enum.map(&String.to_integer/1)
+    |> Enum.map(&String.to_integer/1)
+
     where(query, [o], o.merchant_id in ^ids)
   end
 
   def _query_compose([_, "name", value], query) do
-    value_normalized = String.trim(value)
-      |> String.replace("-", " ")
-    where(query, [o], ilike(o.name, ^"%#{value_normalized}%"))
+    values_normalized = String.split(value, "+")
+    |> Enum.map(fn s -> String.trim(s) end)
+    |> Enum.map(fn s -> String.replace(s, "-", " ") end)
+    |> Enum.join("|")
+
+    where(query, [o], fragment("lower(name) similar to ?", ^"%(#{values_normalized})%"))
   end
 
   def _query_compose([_, "options", value], query) do
     ids = String.split(value, ",")
-      |> Enum.map(&String.to_integer/1)
+    |> Enum.map(&String.to_integer/1)
+
     where(query, [o], o.option_id in ^ids)
   end
 
@@ -118,7 +123,8 @@ defmodule Hello.Catalog.ItemSearch do
 
   def _query_compose([_, "products", value], query) do
     ids = String.split(value, ",")
-      |> Enum.map(&String.to_integer/1)
+    |> Enum.map(&String.to_integer/1)
+
     where(query, [o], o.product_id in ^ids)
   end
 
