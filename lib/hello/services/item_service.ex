@@ -131,7 +131,7 @@ defmodule Hello.ItemService do
     Tracer.with_span("items_service.items_list") do
       query_params = Map.get(params, "query", "")
       query_limit = Map.get(params, "limit", @limit_default) |> String.to_integer
-      query_offset = Map.get(params, "offset", @offset_default)  |> String.to_integer
+      query_offset = Map.get(params, "offset", @offset_default) |> String.to_integer
 
       Tracer.set_attributes([{:query_params, query_params}])
 

@@ -78,8 +78,11 @@ defmodule HelloWeb.MerchantLive do
       {user_handle, user_id} = Session.user_handle_id(session)
 
       # authenticated route
-      items = ItemService.items_list(%{"query" => "merchants:#{merchant_id}"})
+
       merchant = MerchantService.merchant_get!(merchant_id)
+
+      items_search = ItemService.items_list(%{"query" => "merchants:#{merchant_id}", "offset" => "0", "limit" => "100"})
+      items_list = items_search.objects
 
       topic = _merchant_topic(merchant.id)
 
@@ -91,16 +94,17 @@ defmodule HelloWeb.MerchantLive do
         _merchant_subscribe(topic)
 
         Logger.info("user #{user_handle} topic #{topic} presence")
+
         _merchant_presence_online(topic, user_handle)
       end
 
       socket = socket
-      |> assign(:items_count, length(items))
+      |> assign(:items_count, length(items_list))
       |> assign(:merchant, merchant)
       |> assign(:user_handle, user_handle)
       |> assign(:user_id, user_id)
       |> assign(:users_online, _merchant_presence_list(topic))
-      |> stream(:items, items)
+      |> stream(:items, items_list)
 
       {:ok, socket}
     end

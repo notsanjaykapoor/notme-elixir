@@ -23,10 +23,19 @@ defmodule HelloWeb.ItemController do
   def _page_prv(conn, params, search_page) do
     if search_page.offset_prv >= 0 do
         params
-        |> Map.put("offset", search_page.offset_prv)
+        |> _url_offset(search_page.offset_prv)
+        # |> Map.put("offset", search_page.offset_prv)
         |> _url_params(conn.request_path)
     else
       "#"
+    end
+  end
+
+  def _url_offset(params, offset) do
+    if offset > 0 do
+      Map.put(params, "offset", offset)
+    else
+      Map.delete(params, "offset")
     end
   end
 
