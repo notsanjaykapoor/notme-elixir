@@ -1,4 +1,4 @@
-defmodule Hello.Users.User do
+defmodule Hello.Catalog.User do
   use Ecto.Schema
   import Ecto.Changeset
 

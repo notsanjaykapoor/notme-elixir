@@ -1,5 +1,5 @@
 defmodule HelloWeb.UserJSON do
-  alias Hello.Users.User
+  alias Hello.Catalog.User
 
   @doc """
   Renders a list of users.

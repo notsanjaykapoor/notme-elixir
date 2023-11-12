@@ -3,7 +3,7 @@ defmodule HelloWeb.UserControllerTest do
 
   import Hello.UsersFixtures
 
-  alias Hello.Users.User
+  alias Hello.Catalog.User
 
   @create_attrs %{
     email: "user-1@gmail.com",

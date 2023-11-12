@@ -1,12 +1,12 @@
-defmodule Hello.Users do
+defmodule Hello.UserService do
   @moduledoc """
   The Users context.
   """
 
   import Ecto.Query, warn: false
-  alias Hello.Repo
 
-  alias Hello.Users.User
+  alias Hello.Repo
+  alias Hello.Catalog.User
 
   @doc """
   Returns the list of users.

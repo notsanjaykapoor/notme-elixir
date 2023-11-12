@@ -15,7 +15,7 @@ defmodule Hello.UsersFixtures do
         state: "active",
         user_id: "user-1",
       })
-      |> Hello.Users.create_user()
+      |> Hello.UserService.create_user()
 
     user
   end
