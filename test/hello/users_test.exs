@@ -10,9 +10,9 @@ defmodule Hello.UsersTest do
 
     @invalid_attrs %{user_id: "UserA"}
 
-    test "list_users/0 returns all users" do
+    test "users_list/0 returns all users" do
       user = user_fixture()
-      assert UserService.list_users() == [user]
+      assert UserService.users_list() == [user]
     end
 
     test "get_user!/1 returns the user with given id" do

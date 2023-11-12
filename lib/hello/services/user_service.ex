@@ -6,19 +6,23 @@ defmodule Hello.UserService do
   import Ecto.Query, warn: false
 
   alias Hello.Repo
-  alias Hello.Catalog.User
+  alias Hello.Catalog.{User, UserSearch}
 
-  @doc """
-  Returns the list of users.
+  require OpenTelemetry.Tracer, as: Tracer
 
-  ## Examples
+  @spec users_list(map) :: list(User)
+  def users_list(params \\ %{}) do
+    Tracer.with_span("user_service.users_list") do
+      query_params = Map.get(params, "query", "")
+      query_limit = Map.get(params, "limit", 50)
+      query_offset = Map.get(params, "offset", 0)
 
-      iex> list_users()
-      [%User{}, ...]
+      Tracer.set_attributes([{:query_params, query_params}])
 
-  """
-  def list_users do
-    Repo.all(User)
+      users = UserSearch.search(query_params, query_limit, query_offset)
+
+      users
+    end
   end
 
   @doc """

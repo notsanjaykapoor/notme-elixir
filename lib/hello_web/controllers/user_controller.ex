@@ -6,8 +6,8 @@ defmodule HelloWeb.UserController do
 
   action_fallback HelloWeb.FallbackController
 
-  def index(conn, _params) do
-    users = UserService.list_users()
+  def index(conn, params) do
+    users = UserService.users_list(params)
     render(conn, :index, users: users)
   end
 

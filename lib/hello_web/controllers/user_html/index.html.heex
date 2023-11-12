@@ -18,7 +18,7 @@
 </.header>
 
 <.table id="users" rows={@users}>
-  <:col :let={user} label="name"><%= user.email %></:col>
-  <:col :let={user} label="slug"><%= user.state %></:col>
+  <:col :let={user} label="email"><%= user.email %></:col>
+  <:col :let={user} label="state"><%= user.state %></:col>
   <:col :let={user} label="id"><%= user.id %></:col>
 </.table>
