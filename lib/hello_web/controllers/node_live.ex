@@ -1,10 +1,10 @@
-defmodule HelloWeb.NodeLive do
-  use HelloWeb, :live_view
+defmodule NotmeWeb.NodeLive do
+  use NotmeWeb, :live_view
 
   require Logger
   require OpenTelemetry.Tracer, as: Tracer
 
-  alias HelloWeb.Session
+  alias NotmeWeb.Session
 
   @channel_clusters "clusters"
 
@@ -20,7 +20,7 @@ defmodule HelloWeb.NodeLive do
   def mount(_params, session, socket) do
     Tracer.with_span("controller.node_live.mount") do
       if connected?(socket) do
-        Phoenix.PubSub.subscribe(Hello.PubSub, @channel_clusters)
+        Phoenix.PubSub.subscribe(Notme.PubSub, @channel_clusters)
       end
 
       {user_handle, user_id} = Session.user_handle_id(session)

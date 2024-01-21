@@ -5,20 +5,20 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     Hello.Repo.insert!(%Hello.SomeSchema{})
+#     Notme.Repo.insert!(%Notme.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
 import Ecto.Query
 
-alias Hello.Catalog.Item
-alias Hello.Catalog.Location
-alias Hello.Catalog.Merchant
-alias Hello.Catalog.Option
-alias Hello.Catalog.Product
-alias Hello.{ItemService, LocationService, MerchantService, OptionService, ProductService}
-alias Hello.Repo
+alias Notme.Catalog.Item
+alias Notme.Catalog.Location
+alias Notme.Catalog.Merchant
+alias Notme.Catalog.Option
+alias Notme.Catalog.Product
+alias Notme.{ItemService, LocationService, MerchantService, OptionService, ProductService}
+alias Notme.Repo
 
 Faker.start()
 

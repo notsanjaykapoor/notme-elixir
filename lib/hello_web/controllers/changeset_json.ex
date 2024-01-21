@@ -1,4 +1,4 @@
-defmodule HelloWeb.ChangesetJSON do
+defmodule NotmeWeb.ChangesetJSON do
   @doc """
   Renders changeset errors.
   """
@@ -13,9 +13,9 @@ defmodule HelloWeb.ChangesetJSON do
     # uncommenting and adjusting the following code:
 
     # if count = opts[:count] do
-    #   Gettext.dngettext(HelloWeb.Gettext, "errors", msg, msg, count, opts)
+    #   Gettext.dngettext(NotmeWeb.Gettext, "errors", msg, msg, count, opts)
     # else
-    #   Gettext.dgettext(HelloWeb.Gettext, "errors", msg, opts)
+    #   Gettext.dgettext(NotmeWeb.Gettext, "errors", msg, opts)
     # end
 
     Enum.reduce(opts, msg, fn {key, value}, acc ->

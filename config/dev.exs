@@ -1,12 +1,17 @@
 import Config
 
+database_url =
+  System.get_env("DATABASE_URL") ||
+    raise """
+    environment variable DATABASE_URL is missing.
+    For example: ecto://USER:PASS@HOST/DATABASE
+    """
+
+dbg(database_url)
+
 # Configure your database
-config :hello, Hello.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "postgres-dev",
-  port: 5433,
-  database: "phoenix_dev",
+config :notme, Notme.Repo,
+  url: database_url,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -17,7 +22,7 @@ config :hello, Hello.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with esbuild to bundle .js and .css sources.
-config :hello, HelloWeb.Endpoint,
+config :notme, NotmeWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
@@ -54,17 +59,17 @@ config :hello, HelloWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :hello, HelloWeb.Endpoint,
+config :notme, NotmeWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/hello_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/notme_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :hello, dev_routes: true
+config :notme, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
@@ -81,15 +86,15 @@ config :swoosh, :api_client, false
 
 # Opentelemetry
 
-config :hello, :otel_exporter_uri, "http://opentelemetrycollector-dev:4318"
-config :hello, :otel_service_name, "elixir-dev"
+config :notme, :otel_exporter_uri, "http://opentelemetrycollector-dev:4318"
+config :notme, :otel_service_name, "elixir-dev"
 
 # Redpanda
 
-config :hello, :redpanda_host, "redpanda-dev"
-config :hello, :redpanda_port, 9092
-config :hello, :redpanda_topics, ["elixir-dev"]
-config :hello, :redpanda_group_default, "group-0"
+config :notme, :redpanda_host, "redpanda-dev"
+config :notme, :redpanda_port, 9092
+config :notme, :redpanda_topics, ["elixir-dev"]
+config :notme, :redpanda_group_default, "group-0"
 
-config :hello, :redpanda_topic_inventory, "pipe-inventory-dev"
-config :hello, :redpanda_topic_simple, "pipe-simple-dev"
+config :notme, :redpanda_topic_inventory, "pipe-inventory-dev"
+config :notme, :redpanda_topic_simple, "pipe-simple-dev"

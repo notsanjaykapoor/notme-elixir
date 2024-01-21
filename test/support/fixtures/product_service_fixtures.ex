@@ -1,4 +1,4 @@
-defmodule Hello.ProductServiceFixtures do
+defmodule Notme.ProductServiceFixtures do
 
   @doc """
   Generate a product.
@@ -11,7 +11,7 @@ defmodule Hello.ProductServiceFixtures do
         price: 120500,
         views: 0
       })
-      |> Hello.ProductService.product_create()
+      |> Notme.ProductService.product_create()
 
     product
   end

@@ -1,5 +1,5 @@
-defmodule HelloWeb.PlugUserGuest do
-  use HelloWeb, :controller
+defmodule NotmeWeb.PlugUserGuest do
+  use NotmeWeb, :controller
 
   import Plug.Conn
 

@@ -1,5 +1,5 @@
-defmodule HelloWeb.LoginController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.LoginController do
+  use NotmeWeb, :controller
 
   def new(conn, _params) do
     render(conn, :new, user: %{handle: "", password: ""})

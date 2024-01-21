@@ -1,5 +1,5 @@
-defmodule HelloWeb.Layouts do
-  use HelloWeb, :html
+defmodule NotmeWeb.Layouts do
+  use NotmeWeb, :html
 
   embed_templates "layouts/*"
 end

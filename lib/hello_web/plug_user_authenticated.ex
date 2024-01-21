@@ -1,5 +1,5 @@
-defmodule HelloWeb.PlugUserAuthenticated do
-  use HelloWeb, :controller
+defmodule NotmeWeb.PlugUserAuthenticated do
+  use NotmeWeb, :controller
 
   import Plug.Conn
 

@@ -1,4 +1,4 @@
-defmodule HelloWeb.Session do
+defmodule NotmeWeb.Session do
 
   def user_handle_id(session) do
     user_handle = Map.get(session, "user_handle", "guest")

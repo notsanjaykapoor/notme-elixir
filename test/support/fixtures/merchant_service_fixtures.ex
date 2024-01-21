@@ -1,4 +1,4 @@
-defmodule Hello.MerchantServiceFixtures do
+defmodule Notme.MerchantServiceFixtures do
 
   def merchant_fixture(attrs \\ %{}) do
     {:ok, merchant} =
@@ -8,7 +8,7 @@ defmodule Hello.MerchantServiceFixtures do
         slug: "merchant-1",
         state: "active",
       })
-      |> Hello.MerchantService.merchant_create()
+      |> Notme.MerchantService.merchant_create()
 
       merchant
   end

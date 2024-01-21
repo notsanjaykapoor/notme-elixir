@@ -1,4 +1,4 @@
-defmodule Hello.OptionServiceFixtures do
+defmodule Notme.OptionServiceFixtures do
 
   def option_fixture(attrs \\ %{}) do
     {:ok, option} =
@@ -8,7 +8,7 @@ defmodule Hello.OptionServiceFixtures do
         pkg_size: "1g",
         pkg_count: 1,
       })
-      |> Hello.OptionService.option_create()
+      |> Notme.OptionService.option_create()
 
       option
   end

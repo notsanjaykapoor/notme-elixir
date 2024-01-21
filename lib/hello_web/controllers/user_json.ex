@@ -1,5 +1,5 @@
-defmodule HelloWeb.UserJSON do
-  alias Hello.Catalog.User
+defmodule NotmeWeb.UserJSON do
+  alias Notme.Catalog.User
 
   @doc """
   Renders a list of users.

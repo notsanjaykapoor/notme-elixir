@@ -1,7 +1,7 @@
-defmodule Hello.LocationServiceFixtures do
+defmodule Notme.LocationServiceFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Hello.Catalog` context.
+  entities via the `Notme.Catalog` context.
   """
 
   def location_fixture(attrs \\ %{}) do
@@ -11,7 +11,7 @@ defmodule Hello.LocationServiceFixtures do
         name: "location 1",
         slug: "location-1",
       })
-      |> Hello.Catalog.location_create()
+      |> Notme.Catalog.location_create()
 
     location
   end

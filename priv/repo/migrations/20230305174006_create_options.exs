@@ -1,4 +1,4 @@
-defmodule Hello.Repo.Migrations.CreateOptions do
+defmodule Notme.Repo.Migrations.CreateOptions do
   use Ecto.Migration
 
   def change do

@@ -1,8 +1,8 @@
-defmodule HelloWeb.MerchantSocket do
+defmodule NotmeWeb.MerchantSocket do
   use Phoenix.Socket
   require Logger
 
-  channel "ping", HelloWeb.PingChannel
+  channel "ping", NotmeWeb.PingChannel
 
   @one_week 604800
   @salt "salt"

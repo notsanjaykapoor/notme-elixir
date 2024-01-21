@@ -1,7 +1,7 @@
-defmodule Hello.UsersFixtures do
+defmodule Notme.UsersFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Hello.Users` context.
+  entities via the `Notme.Users` context.
   """
 
   @doc """
@@ -15,7 +15,7 @@ defmodule Hello.UsersFixtures do
         state: "active",
         user_id: "user-1",
       })
-      |> Hello.UserService.create_user()
+      |> Notme.UserService.create_user()
 
     user
   end

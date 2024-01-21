@@ -1,7 +1,7 @@
-defmodule HelloWeb.MerchantController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.MerchantController do
+  use NotmeWeb, :controller
 
-  alias Hello.MerchantService
+  alias Notme.MerchantService
 
   def index(conn, params) do
     merchants = MerchantService.merchants_list(params)

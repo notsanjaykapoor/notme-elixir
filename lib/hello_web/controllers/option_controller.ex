@@ -1,7 +1,7 @@
-defmodule HelloWeb.OptionController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.OptionController do
+  use NotmeWeb, :controller
 
-  alias Hello.OptionService
+  alias Notme.OptionService
 
   def index(conn, params) do
     options = OptionService.options_list(params)

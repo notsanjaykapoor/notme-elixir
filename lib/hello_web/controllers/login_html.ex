@@ -1,5 +1,5 @@
-defmodule HelloWeb.LoginHTML do
-  use HelloWeb, :html
+defmodule NotmeWeb.LoginHTML do
+  use NotmeWeb, :html
   import Phoenix.HTML.Form
 
   embed_templates "login_html/*"

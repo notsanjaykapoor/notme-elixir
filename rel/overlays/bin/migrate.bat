@@ -1,1 +1,1 @@
-call "%~dp0\hello" eval Hello.Release.migrate
+call "%~dp0\notme" eval Notme.Release.migrate

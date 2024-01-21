@@ -1,8 +1,8 @@
-defmodule HelloWeb.ProductController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.ProductController do
+  use NotmeWeb, :controller
 
-  alias Hello.Catalog.Product
-  alias Hello.ProductService
+  alias Notme.Catalog.Product
+  alias Notme.ProductService
 
   def index(conn, params) do
     products = ProductService.products_list(params)

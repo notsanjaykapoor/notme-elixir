@@ -1,4 +1,4 @@
-defmodule Hello.ItemServiceFixtures do
+defmodule Notme.ItemServiceFixtures do
 
   @doc """
   Generate a item.
@@ -23,7 +23,7 @@ defmodule Hello.ItemServiceFixtures do
         sku: "sku",
         tags: ["option1", "option2"]
       })
-      |> Hello.ItemService.item_create()
+      |> Notme.ItemService.item_create()
 
     item
   end

@@ -1,5 +1,5 @@
-defmodule HelloWeb.HelloHTML do
-  use HelloWeb, :html
+defmodule NotmeWeb.NotmeHTML do
+  use NotmeWeb, :html
 
-  embed_templates "hello_html/*"
+  embed_templates "notme_html/*"
 end

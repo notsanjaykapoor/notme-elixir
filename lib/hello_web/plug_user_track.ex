@@ -1,9 +1,9 @@
-defmodule HelloWeb.PlugUserTrack do
-  use HelloWeb, :controller
+defmodule NotmeWeb.PlugUserTrack do
+  use NotmeWeb, :controller
 
   import Plug.Conn
 
-  alias HelloWeb.UserTracker
+  alias NotmeWeb.UserTracker
 
   def init(opts), do: opts
 

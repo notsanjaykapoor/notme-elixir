@@ -1,7 +1,7 @@
-defmodule HelloWeb.LogoutController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.LogoutController do
+  use NotmeWeb, :controller
 
-  alias HelloWeb.UserTracker
+  alias NotmeWeb.UserTracker
 
   def index(conn, _params) do
     UserTracker.user_offline(conn.assigns[:user_handle])

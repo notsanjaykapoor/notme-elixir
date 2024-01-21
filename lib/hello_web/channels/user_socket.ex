@@ -1,4 +1,4 @@
-defmodule HelloWeb.UserSocket do
+defmodule NotmeWeb.UserSocket do
   use Phoenix.Socket
 
   # A Socket handler
@@ -8,9 +8,9 @@ defmodule HelloWeb.UserSocket do
 
   ## Channels
   # Uncomment the following line to define a "room:*" topic
-  # pointing to the `HelloWeb.RoomChannel`:
+  # pointing to the `NotmeWeb.RoomChannel`:
   #
-  # channel "room:*", HelloWeb.RoomChannel
+  # channel "room:*", NotmeWeb.RoomChannel
   #
   # To create a channel file, use the mix task:
   #
@@ -19,7 +19,7 @@ defmodule HelloWeb.UserSocket do
   # See the [`Channels guide`](https://hexdocs.pm/phoenix/channels.html)
   # for further details.
 
-  channel "ping", HelloWeb.PingChannel
+  channel "ping", NotmeWeb.PingChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -47,7 +47,7 @@ defmodule HelloWeb.UserSocket do
   # Would allow you to broadcast a "disconnect" event and terminate
   # all active sockets and channels for a given user:
   #
-  #     Elixir.HelloWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
+  #     Elixir.NotmeWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
   @impl true

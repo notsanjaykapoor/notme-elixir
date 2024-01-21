@@ -1,13 +1,13 @@
-defmodule HelloWeb.Router do
-  use HelloWeb, :router
+defmodule NotmeWeb.Router do
+  use NotmeWeb, :router
 
-  alias HelloWeb.{PlugAuthInit, PlugUserAuthenticated, PlugUserGuest, PlugUserTrack}
+  alias NotmeWeb.{PlugAuthInit, PlugUserAuthenticated, PlugUserGuest, PlugUserTrack}
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {HelloWeb.Layouts, :root}
+    plug :put_root_layout, {NotmeWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug PlugAuthInit
@@ -18,7 +18,7 @@ defmodule HelloWeb.Router do
   end
 
   # routes that require authenticated user
-  scope "/", HelloWeb do
+  scope "/", NotmeWeb do
     pipe_through [:browser, PlugUserAuthenticated, PlugUserTrack]
 
     live "/merchants/:merchant_id/live", MerchantLive
@@ -26,7 +26,7 @@ defmodule HelloWeb.Router do
   end
 
   # routes that require guest user
-  scope "/", HelloWeb do
+  scope "/", NotmeWeb do
     pipe_through [:browser, PlugUserGuest]
 
     get "/login", LoginController, :new
@@ -34,11 +34,11 @@ defmodule HelloWeb.Router do
   end
 
   # routes that are open to any user
-  scope "/", HelloWeb do
+  scope "/", NotmeWeb do
     pipe_through [:browser, PlugUserTrack]
 
-    get "/hello/:messenger", HelloController, :show
-    get "/hello", HelloController, :index
+    get "/notme/:messenger", NotmeController, :show
+    get "/notme", NotmeController, :index
 
     get "/logout", LogoutController, :index
 
@@ -52,13 +52,13 @@ defmodule HelloWeb.Router do
     get "/", PageController, :home
   end
 
-  scope "/api", HelloWeb do
+  scope "/api", NotmeWeb do
     pipe_through :api
     resources "/users", UserController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
-  if Application.compile_env(:hello, :dev_routes) do
+  if Application.compile_env(:notme, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
     # If your application does not have an admins-only section yet,
@@ -69,7 +69,7 @@ defmodule HelloWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: HelloWeb.Telemetry
+      live_dashboard "/dashboard", metrics: NotmeWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

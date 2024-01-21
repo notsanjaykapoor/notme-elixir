@@ -1,4 +1,4 @@
-defmodule HelloWeb.PingChannel do
+defmodule NotmeWeb.PingChannel do
   use Phoenix.Channel
 
   def join(_topic, _payload, socket) do

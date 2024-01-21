@@ -7,20 +7,20 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
-redpanda_host = Application.fetch_env!(:hello, :redpanda_host)
-redpanda_port = Application.fetch_env!(:hello, :redpanda_port)
+redpanda_host = Application.fetch_env!(:notme, :redpanda_host)
+redpanda_port = Application.fetch_env!(:notme, :redpanda_port)
 
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server
 # by passing the PHX_SERVER=true when you start it:
 #
-#     PHX_SERVER=true bin/hello start
+#     PHX_SERVER=true bin/notme start
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :hello, HelloWeb.Endpoint, server: true
+  config :notme, NotmeWeb.Endpoint, server: true
 end
 
 if config_env() == :prod do
@@ -33,7 +33,9 @@ if config_env() == :prod do
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
-  config :hello, Hello.Repo,
+  dbg(database_url)
+
+  config :notme, Notme.Repo,
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
@@ -54,7 +56,7 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
-  config :hello, HelloWeb.Endpoint,
+  config :notme, NotmeWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -71,7 +73,7 @@ if config_env() == :prod do
   # To get SSL working, you will need to add the `https` key
   # to your endpoint configuration:
   #
-  #     config :hello, HelloWeb.Endpoint,
+  #     config :notme, NotmeWeb.Endpoint,
   #       https: [
   #         ...,
   #         port: 443,
@@ -93,7 +95,7 @@ if config_env() == :prod do
   # We also recommend setting `force_ssl` in your endpoint, ensuring
   # no data is ever sent via http, always redirecting to https:
   #
-  #     config :hello, HelloWeb.Endpoint,
+  #     config :notme, NotmeWeb.Endpoint,
   #       force_ssl: [hsts: true]
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.
@@ -104,7 +106,7 @@ if config_env() == :prod do
   # Also, you may need to configure the Swoosh API client of your choice if you
   # are not using SMTP. Here is an example of the configuration:
   #
-  #     config :hello, Hello.Mailer,
+  #     config :notme, Notme.Mailer,
   #       adapter: Swoosh.Adapters.Mailgun,
   #       api_key: System.get_env("MAILGUN_API_KEY"),
   #       domain: System.get_env("MAILGUN_DOMAIN")
@@ -129,10 +131,10 @@ config :libcluster,
 
 # opentelemetry
 
-config :opentelemetry, :resource, service: %{name: Application.fetch_env!(:hello, :otel_service_name)}
+config :opentelemetry, :resource, service: %{name: Application.fetch_env!(:notme, :otel_service_name)}
 
 config :opentelemetry, :processors,
     otel_batch_processor: %{
       # exporter endpoint url
-      exporter: {:opentelemetry_exporter, %{endpoints: [Application.fetch_env!(:hello, :otel_exporter_uri)]}}
+      exporter: {:opentelemetry_exporter, %{endpoints: [Application.fetch_env!(:notme, :otel_exporter_uri)]}}
     }

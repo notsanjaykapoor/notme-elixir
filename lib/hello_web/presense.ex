@@ -1,5 +1,5 @@
-defmodule HelloWebApp.Presence do
+defmodule NotmeWebApp.Presence do
   use Phoenix.Presence,
-    otp_app: :hello,
-    pubsub_server: Hello.PubSub
+    otp_app: :notme,
+    pubsub_server: Notme.PubSub
 end

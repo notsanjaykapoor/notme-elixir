@@ -1,9 +1,9 @@
-defmodule HelloWeb.MerchantLive do
-  use HelloWeb, :live_view
+defmodule NotmeWeb.MerchantLive do
+  use NotmeWeb, :live_view
 
-  alias Hello.{ItemService, MerchantService}
-  alias HelloWeb.Session
-  alias HelloWebApp.Presence
+  alias Notme.{ItemService, MerchantService}
+  alias NotmeWeb.Session
+  alias NotmeWebApp.Presence
 
   require Logger
   require OpenTelemetry.Tracer, as: Tracer
@@ -21,7 +21,7 @@ defmodule HelloWeb.MerchantLive do
   #     item = ItemService.item_get!(item.id)
   #     ItemService.item_update(item, %{qavail: item.qavail - 1}) # decrement quantity
 
-  #     Phoenix.PubSub.broadcast(Hello.PubSub, _merchant_topic(merchant.id), %{event: "order_add", id: item.id})
+  #     Phoenix.PubSub.broadcast(Notme.PubSub, _merchant_topic(merchant.id), %{event: "order_add", id: item.id})
   #   end
 
   #   {:noreply, socket}
@@ -129,7 +129,7 @@ defmodule HelloWeb.MerchantLive do
   end
 
   defp _merchant_subscribe(topic) do
-    Phoenix.PubSub.subscribe(Hello.PubSub, topic)
+    Phoenix.PubSub.subscribe(Notme.PubSub, topic)
   end
 
   defp _merchant_topic(merchant_id) do

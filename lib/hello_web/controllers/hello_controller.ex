@@ -1,5 +1,5 @@
-defmodule HelloWeb.HelloController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.NotmeController do
+  use NotmeWeb, :controller
 
   def index(conn, _params) do
     render(conn, :index)

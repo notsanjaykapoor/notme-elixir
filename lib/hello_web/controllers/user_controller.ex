@@ -1,10 +1,10 @@
-defmodule HelloWeb.UserController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.UserController do
+  use NotmeWeb, :controller
 
-  alias Hello.Catalog.User
-  alias Hello.UserService
+  alias Notme.Catalog.User
+  alias Notme.UserService
 
-  action_fallback HelloWeb.FallbackController
+  action_fallback NotmeWeb.FallbackController
 
   def index(conn, params) do
     users = UserService.users_list(params)

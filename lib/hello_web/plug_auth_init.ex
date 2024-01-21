@@ -1,4 +1,4 @@
-defmodule HelloWeb.PlugAuthInit do
+defmodule NotmeWeb.PlugAuthInit do
   import Plug.Conn
 
   def init(opts), do: opts

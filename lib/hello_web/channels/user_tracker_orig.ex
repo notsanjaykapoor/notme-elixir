@@ -1,4 +1,4 @@
-defmodule HelloWeb.UserTrackerOrig do
+defmodule NotmeWeb.UserTrackerOrig do
   @behaviour Phoenix.Tracker
 
   require Logger
@@ -15,7 +15,7 @@ defmodule HelloWeb.UserTrackerOrig do
     opts =
       opts
       |> Keyword.put(:name, __MODULE__)
-      |> Keyword.put(:pubsub_server, Hello.PubSub)
+      |> Keyword.put(:pubsub_server, Notme.PubSub)
 
     Phoenix.Tracker.start_link(__MODULE__, opts, opts)
   end

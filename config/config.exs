@@ -7,17 +7,17 @@
 # General application configuration
 import Config
 
-config :hello,
-  ecto_repos: [Hello.Repo]
+config :notme,
+  ecto_repos: [Notme.Repo]
 
 # Configures the endpoint
-config :hello, HelloWeb.Endpoint,
+config :notme, NotmeWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
-    formats: [html: HelloWeb.ErrorHTML, json: HelloWeb.ErrorJSON],
+    formats: [html: NotmeWeb.ErrorHTML, json: NotmeWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Hello.PubSub,
+  pubsub_server: Notme.PubSub,
   secret_key_base: "DAF3EQHbyGNt+rHTIRG5if61rRQN5cb8tFjt6VW6jzEPWT+fFrqDkbvvCXXXhF6B",
   live_view: [signing_salt: "XKm99qbI"]
 
@@ -28,7 +28,7 @@ config :hello, HelloWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :hello, Hello.Mailer, adapter: Swoosh.Adapters.Local
+config :notme, Notme.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,

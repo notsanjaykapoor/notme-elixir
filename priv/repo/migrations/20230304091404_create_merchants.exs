@@ -1,4 +1,4 @@
-defmodule Hello.Repo.Migrations.CreateMerchants do
+defmodule Notme.Repo.Migrations.CreateMerchants do
   use Ecto.Migration
 
   def change do

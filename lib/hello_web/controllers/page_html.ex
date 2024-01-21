@@ -1,5 +1,5 @@
-defmodule HelloWeb.PageHTML do
-  use HelloWeb, :html
+defmodule NotmeWeb.PageHTML do
+  use NotmeWeb, :html
 
   embed_templates "page_html/*"
 end

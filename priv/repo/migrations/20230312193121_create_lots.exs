@@ -1,4 +1,4 @@
-defmodule Hello.Repo.Migrations.CreateLots do
+defmodule Notme.Repo.Migrations.CreateLots do
   use Ecto.Migration
 
   def change do

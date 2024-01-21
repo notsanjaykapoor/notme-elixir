@@ -1,5 +1,5 @@
-defmodule HelloWeb.MerchantHTML do
-  use HelloWeb, :html
+defmodule NotmeWeb.MerchantHTML do
+  use NotmeWeb, :html
   import Phoenix.HTML.Form
 
   embed_templates "merchant_html/*"

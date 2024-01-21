@@ -1,7 +1,7 @@
-defmodule HelloWeb.ItemController do
-  use HelloWeb, :controller
+defmodule NotmeWeb.ItemController do
+  use NotmeWeb, :controller
 
-  alias Hello.ItemService
+  alias Notme.ItemService
   alias Plug.Conn.Query
 
   def index(conn, params) do
