@@ -21,12 +21,12 @@ defmodule HelloWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = UserService.get_user!(id)
+    user = UserService.user_get_by_id!(id)
     render(conn, :show, user: user)
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = UserService.get_user!(id)
+    user = UserService.user_get_by_id!(id)
 
     with {:ok, %User{} = user} <- UserService.update_user(user, user_params) do
       render(conn, :show, user: user)
@@ -34,7 +34,7 @@ defmodule HelloWeb.UserController do
   end
 
   def delete(conn, %{"id" => id}) do
-    user = UserService.get_user!(id)
+    user = UserService.user_get_by_id!(id)
 
     with {:ok, %User{}} <- UserService.delete_user(user) do
       send_resp(conn, :no_content, "")

@@ -15,9 +15,9 @@ defmodule Hello.UsersTest do
       assert UserService.users_list() == [user]
     end
 
-    test "get_user!/1 returns the user with given id" do
+    test "user_get_by_id!/1 returns the user with given id" do
       user = user_fixture()
-      assert UserService.get_user!(user.id) == user
+      assert UserService.user_get_by_id!(user.id) == user
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -40,13 +40,13 @@ defmodule Hello.UsersTest do
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = UserService.update_user(user, @invalid_attrs)
-      assert user == UserService.get_user!(user.id)
+      assert user == UserService.user_get_by_id!(user.id)
     end
 
     test "delete_user/1 deletes the user" do
       user = user_fixture()
       assert {:ok, %User{}} = UserService.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> UserService.get_user!(user.id) end
+      assert_raise Ecto.NoResultsError, fn -> UserService.user_get_by_id!(user.id) end
     end
 
     test "change_user/1 returns a user changeset" do

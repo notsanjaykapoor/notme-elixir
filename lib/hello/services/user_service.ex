@@ -32,14 +32,14 @@ defmodule Hello.UserService do
 
   ## Examples
 
-      iex> get_user!(123)
+      iex> user_get_by_id!(123)
       %User{}
 
-      iex> get_user!(456)
+      iex> user_get_by_id!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def user_get_by_id!(id), do: Repo.get!(User, id)
 
   @doc """
   Creates a user.
