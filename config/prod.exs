@@ -19,3 +19,13 @@ config :logger, level: :info
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
+
+# Redpanda
+
+config :hello, :redpanda_host, "redpanda-prd"
+config :hello, :redpanda_port, 9092
+config :hello, :redpanda_topics, ["elixir-prd"]
+config :hello, :redpanda_group_default, "group-0"
+
+config :hello, :redpanda_topic_inventory, "pipe-inventory-prd"
+config :hello, :redpanda_topic_simple, "pipe-simple-prd"
