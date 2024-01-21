@@ -20,6 +20,11 @@ config :logger, level: :info
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
 
+# Opentelemetry
+
+config :hello, :otel_exporter_uri, "http://opentelemetrycollector-prd:4318"
+config :hello, :otel_service_name, "elixir-prd"
+
 # Redpanda
 
 config :hello, :redpanda_host, "redpanda-prd"
