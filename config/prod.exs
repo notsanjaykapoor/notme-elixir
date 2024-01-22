@@ -19,18 +19,3 @@ config :logger, level: :info
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
-
-# Opentelemetry
-
-config :notme, :otel_exporter_uri, "http://opentelemetrycollector-prd:4318"
-config :notme, :otel_service_name, "elixir-prd"
-
-# Redpanda
-
-config :notme, :redpanda_host, "redpanda-prd"
-config :notme, :redpanda_port, 9092
-config :notme, :redpanda_topics, ["elixir-prd"]
-config :notme, :redpanda_group_default, "group-0"
-
-config :notme, :redpanda_topic_inventory, "pipe-inventory-prd"
-config :notme, :redpanda_topic_simple, "pipe-simple-prd"

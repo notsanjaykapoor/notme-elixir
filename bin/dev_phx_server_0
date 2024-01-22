@@ -1,2 +1,2 @@
 #! /bin/sh
-source .env.dev && PIPELINES=1 PORT=4000 iex --sname notme-0 -S mix phx.server
+PIPELINES=1 PORT=4000 iex --sname notme-0 -S mix phx.server

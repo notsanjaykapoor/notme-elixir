@@ -1,4 +1,5 @@
 import Config
+import Dotenvy
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
@@ -7,8 +8,8 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
-redpanda_host = Application.fetch_env!(:notme, :redpanda_host)
-redpanda_port = Application.fetch_env!(:notme, :redpanda_port)
+# load env vars
+source!([".env.#{config_env()}", ".env.dev"])
 
 # ## Using releases
 #
@@ -23,24 +24,26 @@ if System.get_env("PHX_SERVER") do
   config :notme, NotmeWeb.Endpoint, server: true
 end
 
-if config_env() == :prod do
+if config_env() != :test do
   database_url =
-    System.get_env("DATABASE_URL") ||
+    env!("DATABASE_URI", :string) ||
       raise """
-      environment variable DATABASE_URL is missing.
+      environment variable DATABASE_URI is missing.
       For example: ecto://USER:PASS@HOST/DATABASE
       """
 
-  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
-
   dbg(database_url)
+
+  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :notme, Notme.Repo,
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
+end
 
+if config_env() == :prod do
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
   # want to use a different value for prod and you most likely don't want
@@ -131,10 +134,20 @@ config :libcluster,
 
 # opentelemetry
 
-config :opentelemetry, :resource, service: %{name: Application.fetch_env!(:notme, :otel_service_name)}
+config :opentelemetry, :resource, service: %{name: env!("OTEL_SERVICE_NAME", :string)}
 
 config :opentelemetry, :processors,
     otel_batch_processor: %{
       # exporter endpoint url
-      exporter: {:opentelemetry_exporter, %{endpoints: [Application.fetch_env!(:notme, :otel_exporter_uri)]}}
+      exporter: {:opentelemetry_exporter, %{endpoints: [env!("OTEL_EXPORTER_URI", :string)]}}
     }
+
+
+# redpanda
+
+config :notme, :redpanda_host, env!("REDPANDA_HOST", :string)
+config :notme, :redpanda_port, env!("REDPANDA_PORT", :integer)
+config :notme, :redpanda_group, env!("REDPANDA_GROUP", :string)
+
+config :notme, :redpanda_topic_inventory, "pipe-inventory-dev"
+config :notme, :redpanda_topic_simple, "pipe-simple-dev"

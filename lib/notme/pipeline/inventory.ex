@@ -10,9 +10,13 @@ defmodule Notme.Pipeline.Inventory do
   def start_link(_opts) do
     redpanda_host = Application.fetch_env!(:notme, :redpanda_host)
     redpanda_port = Application.fetch_env!(:notme, :redpanda_port)
-    redpanda_group = Application.fetch_env!(:notme, :redpanda_group_default)
+    redpanda_group = Application.fetch_env!(:notme, :redpanda_group)
 
     topic_name = Application.fetch_env!(:notme, :redpanda_topic_inventory)
+
+    dbg(redpanda_host)
+    dbg(redpanda_port)
+    dbg(redpanda_group)
 
     Broadway.start_link(__MODULE__,
       name: __MODULE__,

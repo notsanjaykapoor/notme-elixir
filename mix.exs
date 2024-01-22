@@ -58,6 +58,7 @@ defmodule Notme.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:ex_ulid, "~> 0.1.0"},
       {:broadway_kafka, "~> 0.4"},
+      {:dotenvy, "~> 0.8.0"},
       {:faker, "~> 0.17"},
       {:libcluster, "~> 3.3"},
       {:opentelemetry_exporter, "~> 1.3"}, # add this before other opentelemetry libs

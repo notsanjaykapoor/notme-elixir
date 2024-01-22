@@ -1,21 +1,5 @@
 import Config
 
-database_url =
-  System.get_env("DATABASE_URL") ||
-    raise """
-    environment variable DATABASE_URL is missing.
-    For example: ecto://USER:PASS@HOST/DATABASE
-    """
-
-dbg(database_url)
-
-# Configure your database
-config :notme, Notme.Repo,
-  url: database_url,
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -83,18 +67,3 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
-
-# Opentelemetry
-
-config :notme, :otel_exporter_uri, "http://opentelemetrycollector-dev:4318"
-config :notme, :otel_service_name, "elixir-dev"
-
-# Redpanda
-
-config :notme, :redpanda_host, "redpanda-dev"
-config :notme, :redpanda_port, 9092
-config :notme, :redpanda_topics, ["elixir-dev"]
-config :notme, :redpanda_group_default, "group-0"
-
-config :notme, :redpanda_topic_inventory, "pipe-inventory-dev"
-config :notme, :redpanda_topic_simple, "pipe-simple-dev"

@@ -42,8 +42,7 @@ config :notme, :otel_service_name, "elixir-tst"
 
 config :notme, :redpanda_host, "redpanda-dev"
 config :notme, :redpanda_port, 9092
-config :notme, :redpanda_topics, ["elixir-tst"]
-config :notme, :redpanda_group_default, "group-0"
+config :notme, :redpanda_group, "group-0"
 
 config :notme, :redpanda_topic_inventory, "pipe-inventory-tst"
 config :notme, :redpanda_topic_simple, "pipe-simple-tst"

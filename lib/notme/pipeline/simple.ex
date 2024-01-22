@@ -6,7 +6,7 @@ defmodule Notme.Pipeline.Simple do
   def start_link(_opts) do
     redpanda_host = Application.fetch_env!(:notme, :redpanda_host)
     redpanda_port = Application.fetch_env!(:notme, :redpanda_port)
-    redpanda_group = Application.fetch_env!(:notme, :redpanda_group_default)
+    redpanda_group = Application.fetch_env!(:notme, :redpanda_group)
 
     topic_name = Application.fetch_env!(:notme, :redpanda_topic_simple)
 
