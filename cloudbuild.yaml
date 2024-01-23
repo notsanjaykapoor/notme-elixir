@@ -5,7 +5,7 @@ steps:
 
   - name: "gcr.io/cloud-builders/docker"
     args:
-      ["build", "-t", "gcr.io/notme-330419/notme-elixir:$COMMIT_SHA", "-t", "gcr.io/notme-330419/notme-elixir:latest", "."]
+      ["build", "-t", "gcr.io/notme-330419/notme-elixir:$COMMIT_SHA", "-t", "gcr.io/notme-330419/notme-elixir:latest", "--build-arg", "NOTME_VERSION=$COMMIT_SHA", "."]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/notme-330419/notme-elixir:$COMMIT_SHA"]
