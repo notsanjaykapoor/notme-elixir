@@ -1,8 +1,4 @@
 steps:
-  - name: "ubuntu"
-    args:
-      ["bash", "-c", "echo 'NOTME_VERSION=$COMMIT_SHA' > .env.version"]
-
   - name: "gcr.io/cloud-builders/docker"
     args:
       ["build", "-t", "gcr.io/notme-330419/notme-elixir:$COMMIT_SHA", "-t", "gcr.io/notme-330419/notme-elixir:latest", "--build-arg", "NOTME_VERSION=$COMMIT_SHA", "."]
