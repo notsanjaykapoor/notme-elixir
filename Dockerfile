@@ -14,6 +14,7 @@
 ARG ELIXIR_VERSION=1.15.4
 ARG OTP_VERSION=26.0.2
 ARG DEBIAN_VERSION=bullseye-20230612-slim
+ARG NOTME_VERSION=xyz
 
 # note: image 'hexpm/elixir' vs 'hexpm/elixir-amd64' is important; getting it wrong results in a segfault
 ARG BUILDER_IMAGE="hexpm/elixir-amd64:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
@@ -84,6 +85,7 @@ RUN chown nobody /app
 
 # set runner ENV
 ENV MIX_ENV="prod"
+ENV NOTME_VERSION=$NOTME_VERSION
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/notme ./
