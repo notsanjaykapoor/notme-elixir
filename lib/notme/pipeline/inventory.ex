@@ -14,10 +14,6 @@ defmodule Notme.Pipeline.Inventory do
 
     topic_name = Application.fetch_env!(:notme, :redpanda_topic_inventory)
 
-    dbg(redpanda_host)
-    dbg(redpanda_port)
-    dbg(redpanda_group)
-
     Broadway.start_link(__MODULE__,
       name: __MODULE__,
       producer: [
