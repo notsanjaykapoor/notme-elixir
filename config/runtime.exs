@@ -9,10 +9,11 @@ import Dotenvy
 # The block below contains prod specific runtime configuration.
 
 # load env vars
-source!([".env.#{config_env()}", ".env.dev"])
+source!([".env.#{config_env()}", ".env.version"])
 
 config :notme, :env, config_env()
 config :notme, :home, env!("NOTME_HOME", :string) || "me"
+config :notme, :version, env!("NOTME_VERSION", :string) || "n/a"
 
 # ## Using releases
 #
