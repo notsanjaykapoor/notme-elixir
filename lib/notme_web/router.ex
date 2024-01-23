@@ -43,6 +43,7 @@ defmodule NotmeWeb.Router do
     get "/logout", LogoutController, :index
 
     resources "/items", ItemController, only: [:index]
+    resources "/me", MeController, only: [:index]
     resources "/merchants", MerchantController, only: [:index]
     live "/nodes/live", NodeLive
     resources "/options", OptionController, only: [:index]

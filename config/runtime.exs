@@ -11,6 +11,9 @@ import Dotenvy
 # load env vars
 source!([".env.#{config_env()}", ".env.dev"])
 
+config :notme, :env, config_env()
+config :notme, :home, env!("NOTME_HOME", :string) || "me"
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server
