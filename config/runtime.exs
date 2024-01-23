@@ -13,7 +13,7 @@ source!([".env.#{config_env()}", ".env.version"])
 
 config :notme, :env, config_env()
 config :notme, :home, env!("NOTME_HOME", :string) || "me"
-config :notme, :version, env!("NOTME_VERSION", :string) || "n/a"
+config :notme, :version, env("NOTME_VERSION", :string) || "n/a"
 
 # ## Using releases
 #
