@@ -8,7 +8,7 @@ defmodule Notme.MerchantServiceFixtures do
         slug: "merchant-1",
         state: "active",
       })
-      |> Notme.MerchantService.merchant_create()
+      |> Notme.Service.Merchant.merchant_create()
 
       merchant
   end

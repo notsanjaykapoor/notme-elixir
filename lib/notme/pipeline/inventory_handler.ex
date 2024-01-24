@@ -3,23 +3,23 @@ defmodule Notme.Pipeline.InventoryHandler do
   import Ecto.Query
 
   alias Notme.Model.Location
-  alias Notme.{ItemService, MerchantService, OptionService, ProductService}
+  alias Notme.Service
   alias Notme.Repo
 
   def item_add(%{"event" => "item_add", "merchant_id" => merchant_id, "product_name" => product_name} = _data) do
-    merchant = MerchantService.merchant_get!(merchant_id)
+    merchant = Service.Merchant.merchant_get!(merchant_id)
 
     # find or create product
 
-    {:ok, product} = ProductService.product_find_or_create(merchant.id, product_name)
+    {:ok, product} = Service.Product.product_find_or_create(merchant.id, product_name)
 
     # create option
 
-    [pkg_size] = OptionService.option_pkg_sizes_random(1)
-    [pkg_count] = OptionService.option_pkg_counts_random(1)
+    [pkg_size] = Service.Option.option_pkg_sizes_random(1)
+    [pkg_count] = Service.Option.option_pkg_counts_random(1)
     option_name = "#{product.name} - #{pkg_size} - #{pkg_count}"
 
-    {:ok, option} = OptionService.option_create(%{name: option_name, pkg_count: pkg_count, pkg_size: pkg_size, product_id: product.id})
+    {:ok, option} = Service.Option.option_create(%{name: option_name, pkg_count: pkg_count, pkg_size: pkg_size, product_id: product.id})
 
     # get random location
 
@@ -30,9 +30,9 @@ defmodule Notme.Pipeline.InventoryHandler do
       item_price: item_price,
       item_sku: item_sku,
       lot_id: lot_id,
-    } = ItemService.item_create_props(product, option, location)
+    } = Service.Item.item_create_props(product, option, location)
 
-    {:ok, item} = ItemService.item_create(%{
+    {:ok, item} = Service.Item.item_create(%{
       loc_name: location.slug,
       lot_id: lot_id,
       merchant_id: merchant.id,

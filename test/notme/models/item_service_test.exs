@@ -1,7 +1,7 @@
-defmodule Notme.ItemServiceTest do
+defmodule Notme.Service.ItemTest do
   use Notme.DataCase, async: true
 
-  alias Notme.ItemService
+  alias Notme.Service
 
   describe "items" do
     alias Notme.Model.Item
@@ -20,7 +20,7 @@ defmodule Notme.ItemServiceTest do
 
       item = item_fixture(%{merchant_id: merchant.id, product_id: product.id, option_id: option.id})
 
-      item_page = ItemService.items_list()
+      item_page = Service.Item.items_list()
 
       assert item_page.objects == [item]
     end
@@ -32,7 +32,7 @@ defmodule Notme.ItemServiceTest do
 
       item = item_fixture(%{merchant_id: merchant.id, product_id: product.id, option_id: option.id})
 
-      assert ItemService.item_get!(item.id) == item
+      assert Service.Item.item_get!(item.id) == item
     end
 
     test "item_create/1 with valid data creates a item" do
@@ -54,7 +54,7 @@ defmodule Notme.ItemServiceTest do
         tags: ["option1", "option2"],
       }
 
-      assert {:ok, %Item{} = item} = ItemService.item_create(valid_attrs)
+      assert {:ok, %Item{} = item} = Service.Item.item_create(valid_attrs)
       assert item.loc_name == "chicago 1"
       assert item.lot_id == "12345"
       assert item.name == "some name"
@@ -68,7 +68,7 @@ defmodule Notme.ItemServiceTest do
     end
 
     test "item_create/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = ItemService.item_create(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Service.Item.item_create(@invalid_attrs)
     end
 
     test "item_update/2 with valid data updates the item" do
@@ -80,7 +80,7 @@ defmodule Notme.ItemServiceTest do
 
       update_attrs = %{name: "some updated name", price: 43, tags: ["option1"]}
 
-      assert {:ok, %Item{} = item} = ItemService.item_update(item, update_attrs)
+      assert {:ok, %Item{} = item} = Service.Item.item_update(item, update_attrs)
       assert item.name == "some updated name"
       assert item.price == 43
       assert item.tags == ["option1"]
@@ -93,8 +93,8 @@ defmodule Notme.ItemServiceTest do
 
       item = item_fixture(%{merchant_id: merchant.id, product_id: product.id, option_id: option.id})
 
-      assert {:error, %Ecto.Changeset{}} = ItemService.item_update(item, @invalid_attrs)
-      assert item == ItemService.item_get!(item.id)
+      assert {:error, %Ecto.Changeset{}} = Service.Item.item_update(item, @invalid_attrs)
+      assert item == Service.Item.item_get!(item.id)
     end
 
     test "item_delete/1 deletes the item" do
@@ -104,8 +104,8 @@ defmodule Notme.ItemServiceTest do
 
       item = item_fixture(%{merchant_id: merchant.id, product_id: product.id, option_id: option.id})
 
-      assert {:ok, %Item{}} = ItemService.item_delete(item)
-      assert_raise Ecto.NoResultsError, fn -> ItemService.item_get!(item.id) end
+      assert {:ok, %Item{}} = Service.Item.item_delete(item)
+      assert_raise Ecto.NoResultsError, fn -> Service.Item.item_get!(item.id) end
     end
 
     test "item_change/1 returns a item changeset" do
@@ -115,7 +115,7 @@ defmodule Notme.ItemServiceTest do
 
       item = item_fixture(%{merchant_id: merchant.id, product_id: product.id, option_id: option.id})
 
-      assert %Ecto.Changeset{} = ItemService.item_change(item)
+      assert %Ecto.Changeset{} = Service.Item.item_change(item)
     end
   end
 end

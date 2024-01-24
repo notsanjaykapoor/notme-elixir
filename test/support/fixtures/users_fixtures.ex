@@ -15,7 +15,7 @@ defmodule Notme.UsersFixtures do
         state: "active",
         user_id: "user-1",
       })
-      |> Notme.UserService.create_user()
+      |> Notme.Service.User.create_user()
 
     user
   end

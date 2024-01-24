@@ -1,4 +1,4 @@
-defmodule Notme.ProductService do
+defmodule Notme.Service.Product do
 
   import Ecto.Query, warn: false
 

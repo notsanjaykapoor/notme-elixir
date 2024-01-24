@@ -11,7 +11,7 @@ defmodule Notme.ProductServiceFixtures do
         price: 120500,
         views: 0
       })
-      |> Notme.ProductService.product_create()
+      |> Notme.Service.Product.product_create()
 
     product
   end

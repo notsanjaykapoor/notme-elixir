@@ -1,7 +1,7 @@
 defmodule NotmeWeb.MerchantLive do
   use NotmeWeb, :live_view
 
-  alias Notme.{ItemService, MerchantService}
+  alias Notme.Service
   alias NotmeWeb.Session
   alias NotmeWebApp.Presence
 
@@ -33,7 +33,7 @@ defmodule NotmeWeb.MerchantLive do
 
     Logger.info("controller 'merchant_live' user #{user_handle} merchant #{merchant.id} item_add #{id}")
 
-    item = ItemService.item_get!(id)
+    item = Service.Item.item_get!(id)
 
     socket = socket
     |> stream_insert(:items, item, at: 0)
@@ -48,7 +48,7 @@ defmodule NotmeWeb.MerchantLive do
 
     Logger.info("controller 'merchant_live' user #{user_handle} merchant #{merchant.id} order_add #{id}")
 
-    item = ItemService.item_get!(id)
+    item = Service.Item.item_get!(id)
     socket = stream_insert(socket, :items, item)
 
     {:noreply, socket}
@@ -79,9 +79,9 @@ defmodule NotmeWeb.MerchantLive do
 
       # authenticated route
 
-      merchant = MerchantService.merchant_get!(merchant_id)
+      merchant = Service.Merchant.merchant_get!(merchant_id)
 
-      items_search = ItemService.items_list(%{"query" => "merchants:#{merchant_id}", "offset" => "0", "limit" => "100"})
+      items_search = Service.Item.items_list(%{"query" => "merchants:#{merchant_id}", "offset" => "0", "limit" => "100"})
       items_list = items_search.objects
 
       topic = _merchant_topic(merchant.id)

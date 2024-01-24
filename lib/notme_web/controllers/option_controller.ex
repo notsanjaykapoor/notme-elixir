@@ -1,10 +1,10 @@
 defmodule NotmeWeb.OptionController do
   use NotmeWeb, :controller
 
-  alias Notme.OptionService
+  alias Notme.Service
 
   def index(conn, params) do
-    options = OptionService.options_list(params)
+    options = Service.Option.options_list(params)
     render(conn, :index, options: options)
   end
 

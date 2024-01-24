@@ -23,7 +23,7 @@ defmodule Notme.ItemServiceFixtures do
         sku: "sku",
         tags: ["option1", "option2"]
       })
-      |> Notme.ItemService.item_create()
+      |> Notme.Service.Item.item_create()
 
     item
   end

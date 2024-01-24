@@ -1,4 +1,4 @@
-defmodule Notme.LocationService do
+defmodule Notme.Service.Location do
 
   import Ecto.Query, warn: false
 

@@ -1,11 +1,11 @@
 defmodule NotmeWeb.ItemController do
   use NotmeWeb, :controller
 
-  alias Notme.ItemService
+  alias Notme.Service
   alias Plug.Conn.Query
 
   def index(conn, params) do
-    search_page = ItemService.items_list(params)
+    search_page = Service.Item.items_list(params)
 
     render(conn, :index, page_nxt: _page_nxt(conn, params, search_page), page_prv: _page_prv(conn, params, search_page), search_page: search_page)
   end

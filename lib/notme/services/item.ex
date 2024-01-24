@@ -1,4 +1,4 @@
-defmodule Notme.ItemService do
+defmodule Notme.Service.Item do
 
   import Ecto.Query, warn: false
 

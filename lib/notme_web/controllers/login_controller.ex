@@ -1,7 +1,7 @@
 defmodule NotmeWeb.LoginController do
   use NotmeWeb, :controller
 
-  alias Notme.LoginService
+  alias Notme.Service
 
   def new(conn, _params) do
     render(conn, :new, user: %{handle: "", password: ""})
@@ -14,7 +14,7 @@ defmodule NotmeWeb.LoginController do
 
     return_to = get_session(conn, :return_to) || "/"
 
-    case LoginService.password_validate(user_password, Application.get_env(:notme, :auth)) do
+    case Service.Login.password_validate(user_password, Application.get_env(:notme, :auth)) do
       {:ok, reason} ->
         dbg(reason)
         conn

@@ -8,7 +8,7 @@ defmodule Notme.OptionServiceFixtures do
         pkg_size: "1g",
         pkg_count: 1,
       })
-      |> Notme.OptionService.option_create()
+      |> Notme.Service.Option.option_create()
 
       option
   end
