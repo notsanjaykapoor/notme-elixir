@@ -1,4 +1,4 @@
-defmodule Notme.Catalog.Option do
+defmodule Notme.Model.Option do
   use Ecto.Schema
   import Ecto.Changeset
 

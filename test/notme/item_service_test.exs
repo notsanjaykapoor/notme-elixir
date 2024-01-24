@@ -4,7 +4,7 @@ defmodule Notme.ItemServiceTest do
   alias Notme.ItemService
 
   describe "items" do
-    alias Notme.Catalog.Item
+    alias Notme.Model.Item
 
     import Notme.ItemServiceFixtures
     import Notme.MerchantServiceFixtures

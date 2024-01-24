@@ -1,12 +1,9 @@
 defmodule Notme.LocationService do
-  @moduledoc """
-  The LocationService context.
-  """
 
   import Ecto.Query, warn: false
 
   alias Notme.Repo
-  alias Notme.Catalog.Location
+  alias Notme.Model.Location
 
 
   def location_create(attrs \\ %{}) do

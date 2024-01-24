@@ -1,14 +1,14 @@
-defmodule Notme.Catalog.ItemSearch do
+defmodule Notme.Model.ItemSearch do
   @moduledoc """
-  The Catalog ItemSearch context.
+  The ItemSearch context.
   """
 
-  alias Notme.Catalog.{Item, Search, SearchPage}
+  alias Notme.Model.{Item, Search, SearchPage}
   alias Notme.Repo
 
   import Ecto.Query
 
-  @spec search(binary, number, number) :: %Notme.Catalog.SearchPage{
+  @spec search(binary, number, number) :: %Notme.Model.SearchPage{
           count: non_neg_integer,
           limit: number,
           objects: list,

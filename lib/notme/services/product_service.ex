@@ -2,7 +2,7 @@ defmodule Notme.ProductService do
 
   import Ecto.Query, warn: false
 
-  alias Notme.Catalog.{Item, Option, Product, ProductSearch}
+  alias Notme.Model.{Item, Option, Product, ProductSearch}
   alias Notme.Repo
 
   require OpenTelemetry.Tracer, as: Tracer

@@ -1,8 +1,8 @@
-defmodule Notme.Catalog.ItemSearchTest do
+defmodule Notme.Model.ItemSearchTest do
   use Notme.DataCase, async: true
 
-  alias Notme.Catalog.Item
-  alias Notme.Catalog.ItemSearch
+  alias Notme.Model.Item
+  alias Notme.Model.ItemSearch
 
   import Notme.ItemServiceFixtures
   import Notme.MerchantServiceFixtures

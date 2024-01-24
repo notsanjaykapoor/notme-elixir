@@ -2,7 +2,7 @@ defmodule Notme.Pipeline.InventoryHandler do
 
   import Ecto.Query
 
-  alias Notme.Catalog.Location
+  alias Notme.Model.Location
   alias Notme.{ItemService, MerchantService, OptionService, ProductService}
   alias Notme.Repo
 

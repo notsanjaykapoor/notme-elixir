@@ -1,7 +1,7 @@
 defmodule NotmeWeb.ProductController do
   use NotmeWeb, :controller
 
-  alias Notme.Catalog.Product
+  alias Notme.Model.Product
   alias Notme.ProductService
 
   def index(conn, params) do

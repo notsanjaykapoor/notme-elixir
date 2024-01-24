@@ -1,4 +1,4 @@
-defmodule Notme.Catalog.Merchant do
+defmodule Notme.Model.Merchant do
   use Ecto.Schema
   import Ecto.Changeset
 

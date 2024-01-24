@@ -12,11 +12,11 @@
 
 import Ecto.Query
 
-alias Notme.Catalog.Item
+alias Notme.Model.Item
 alias Notme.Catalog.Location
 alias Notme.Catalog.Merchant
 alias Notme.Catalog.Option
-alias Notme.Catalog.Product
+alias Notme.Model.Product
 alias Notme.{ItemService, LocationService, MerchantService, OptionService, ProductService}
 alias Notme.Repo
 

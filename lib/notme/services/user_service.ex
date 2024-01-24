@@ -1,12 +1,9 @@
 defmodule Notme.UserService do
-  @moduledoc """
-  The Users context.
-  """
 
   import Ecto.Query, warn: false
 
+  alias Notme.Model.{User, UserSearch}
   alias Notme.Repo
-  alias Notme.Catalog.{User, UserSearch}
 
   require OpenTelemetry.Tracer, as: Tracer
 

@@ -1,4 +1,4 @@
-defmodule Notme.Catalog.Location do
+defmodule Notme.Model.Location do
   use Ecto.Schema
   import Ecto.Changeset
 

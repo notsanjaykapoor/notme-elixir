@@ -1,8 +1,8 @@
-defmodule Notme.Catalog.Item do
+defmodule Notme.Model.Item do
   use Ecto.Schema
   import Ecto.Changeset
   alias Notme.Catalog.Option
-  alias Notme.Catalog.Product
+  alias Notme.Model.Product
 
   schema "items" do
     field :loc_name, :string

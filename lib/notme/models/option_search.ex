@@ -1,10 +1,10 @@
-defmodule Notme.Catalog.OptionSearch do
+defmodule Notme.Model.OptionSearch do
   @moduledoc """
   The Catalog OptionSearch context.
   """
 
-  alias Notme.Catalog.Option
-  alias Notme.Catalog.Search
+  alias Notme.Model.Option
+  alias Notme.Model.Search
   alias Notme.Repo
 
   import Ecto.Query

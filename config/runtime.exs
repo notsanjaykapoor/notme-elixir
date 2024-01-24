@@ -11,9 +11,9 @@ import Dotenvy
 # load env vars
 source!([".env.#{config_env()}", ".env.version", System.get_env()])
 
-dbg(File.cwd!) #
-
 config :notme, :env, config_env()
+
+config :notme, :auth, env!("NOTME_AUTH", :string, "")
 config :notme, :home, env!("NOTME_HOME", :string, "me")
 config :notme, :version, env!("NOTME_VERSION", :string, "prd")
 

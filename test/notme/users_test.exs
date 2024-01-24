@@ -4,7 +4,7 @@ defmodule Notme.UsersTest do
   alias Notme.UserService
 
   describe "users" do
-    alias Notme.Catalog.User
+    alias Notme.Model.User
 
     import Notme.UsersFixtures
 

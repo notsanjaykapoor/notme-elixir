@@ -1,4 +1,4 @@
-defmodule Notme.Catalog.Product do
+defmodule Notme.Model.Product do
   use Ecto.Schema
   import Ecto.Changeset
 

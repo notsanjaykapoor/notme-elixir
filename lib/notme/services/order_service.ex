@@ -1,6 +1,6 @@
 defmodule Notme.OrderService do
 
-  alias Notme.Catalog.Item
+  alias Notme.Model.Item
   alias Notme.ItemService
   alias Notme.Repo
 

@@ -1,7 +1,7 @@
 defmodule NotmeWeb.UserController do
   use NotmeWeb, :controller
 
-  alias Notme.Catalog.User
+  alias Notme.Model.User
   alias Notme.UserService
 
   action_fallback NotmeWeb.FallbackController

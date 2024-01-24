@@ -1,5 +1,5 @@
 defmodule NotmeWeb.UserJSON do
-  alias Notme.Catalog.User
+  alias Notme.Model.User
 
   @doc """
   Renders a list of users.

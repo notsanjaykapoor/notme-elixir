@@ -1,4 +1,4 @@
-defmodule Notme.Catalog.Lot do
+defmodule Notme.Model.Lot do
   use Ecto.Schema
   import Ecto.Changeset
 

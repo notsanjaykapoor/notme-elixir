@@ -1,7 +1,4 @@
-defmodule Notme.Catalog.Search do
-  @moduledoc """
-  The Catalog Search context.
-  """
+defmodule Notme.Model.Search do
 
   @spec search_clauses(String.t) :: {:ok, list}
   def search_clauses(search_query) do

@@ -1,14 +1,11 @@
-defmodule Notme.Catalog.MerchantSearch do
-  @moduledoc """
-  The Catalog MerchantSearch context.
-  """
+defmodule Notme.Model.UserSearch do
 
-  alias Notme.Catalog.{Merchant, Search}
+  alias Notme.Model.{Search, User}
   alias Notme.Repo
 
   import Ecto.Query
 
-  @spec search(String.t, integer, integer) :: Enum.Merchant
+  @spec search(String.t, integer, integer) :: Enum.User
   def search(search_query, limit_, offset_) do
     {:ok, clauses} = Search.search_clauses(search_query)
 
@@ -22,7 +19,7 @@ defmodule Notme.Catalog.MerchantSearch do
 
   @spec _query_base() :: Ecto.Query.t()
   def _query_base() do
-    from o in Merchant
+    from o in User
   end
 
   @spec _query_build(Ecto.Query.t(), list) :: Ecto.Query.t()
@@ -42,19 +39,25 @@ defmodule Notme.Catalog.MerchantSearch do
     where(query, [o], o.id in ^ids)
   end
 
-  def _query_compose([x, "merchant", value], query) do
-    _query_compose([x, "ids", value], query)
-  end
+  def _query_compose([_, "email", value], query) do
+    value_normalized = String.trim(value)
+      |> String.replace("-", " ")
 
-  def _query_compose([x, "merchants", value], query) do
-    _query_compose([x, "ids", value], query)
+    where(query, [o], ilike(o.email, ^"%#{value_normalized}%"))
   end
 
   def _query_compose([_, "name", value], query) do
     value_normalized = String.trim(value)
       |> String.replace("-", " ")
 
-    where(query, [o], ilike(o.name, ^"%#{value_normalized}%"))
+    where(query, [o], ilike(o.email, ^"%#{value_normalized}%"))
+  end
+
+  def _query_compose([_, "state", value], query) do
+    value_normalized = String.trim(value)
+      |> String.replace("-", " ")
+
+    where(query, [o], ilike(o.state, ^"%#{value_normalized}%"))
   end
 
   def _query_count(query) do

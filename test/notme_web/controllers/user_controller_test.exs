@@ -3,7 +3,7 @@ defmodule NotmeWeb.UserControllerTest do
 
   import Notme.UsersFixtures
 
-  alias Notme.Catalog.User
+  alias Notme.Model.User
 
   @create_attrs %{
     email: "user-1@gmail.com",
