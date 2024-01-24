@@ -11,7 +11,7 @@ defmodule Notme.LocationServiceFixtures do
         name: "location 1",
         slug: "location-1",
       })
-      |> Notme.Catalog.location_create()
+      |> Notme.LocationService.location_create()
 
     location
   end

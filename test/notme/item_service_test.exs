@@ -1,4 +1,4 @@
-defmodule Notme.CatalogTest do
+defmodule Notme.ItemServiceTest do
   use Notme.DataCase, async: true
 
   alias Notme.ItemService
