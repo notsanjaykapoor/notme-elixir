@@ -1,2 +1,0 @@
-#! /bin/sh
-PIPELINES=1 PORT=4000 iex --sname notme-0 -S mix phx.server

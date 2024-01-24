@@ -1,0 +1,45 @@
+#! /bin/sh
+
+usage()
+{
+  echo "Usage: $0 [-a host-or-ip-address] [-u user] [-r] [-d]"
+  exit 2
+}
+
+deploy=0
+reboot=0
+
+while getopts a:u:dr?h flag
+do
+    case "${flag}" in
+        a) host=${OPTARG};;
+        u) user=${OPTARG};;
+        d) deploy=1;;
+        r) reboot=1;;
+        h|?) usage ;;
+    esac
+done
+
+if [ $reboot == 1 ]
+then
+  echo "reboot ..."
+  ssh -t $user@$host 'sudo reboot'
+fi
+
+if [ $deploy == 1 ]
+then
+  echo "deploy starting ..."
+  echo "scp files ..."
+  scp .env.db.prod $user@$host:.env.db.prod
+  scp .env.prod $user@$host:.env.prod
+  echo "docker network ..."
+  ssh -t $user@$host 'docker network create --driver bridge notme'
+  echo "docker postgres ..."
+  ssh -t $user@$host 'docker run --name postgres-prd --network notme -d --rm --env-file .env.db.prod postgis/postgis:16-3.4'
+  echo "docker postgres wait ..."
+  sleep 5
+  echo "docker migrate ..."
+  ssh -t $user@$host 'docker run --network notme -d --rm --env-file .env.prod gcr.io/notme-330419/notme-elixir:latest /app/bin/migrate'
+  echo "docker app ..."
+  ssh -t $user@$host 'docker run --name notme-elixir-prd --network notme -d --rm -p 80:4000 --env-file .env.prod gcr.io/notme-330419/notme-elixir:latest'
+fi
