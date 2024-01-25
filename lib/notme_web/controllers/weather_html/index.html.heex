@@ -17,31 +17,29 @@
 <div class="container grid grid-cols-10 mt-20">
   <%= if @name != nil do %>
     <span class="col-span-8 col-start-2 text-center">
-      <span class="font-bold text-blue-600">
+      <span class="font-semibold">
         <%= @name %>
       </span>
       temp is 
       <span class="font-bold text-blue-600">
-        <%= Map.get(@temp, "temp", "") %>
+        <%= Map.get(@temp, "temp", "") %>,
       </span>
-      and feels like
+      feels like
       <span class="font-bold text-blue-600">
-        <%= Map.get(@temp, "feels_like", "") %>
+        <%= Map.get(@temp, "feels_like", "") %>,
       </span>
-    </span>
-    <span class="col-span-8 col-start-2 mt-5 text-center">
-      <span class="font-bold text-blue-600">
-        <%= Map.get(@weather, "description", "") %>
-      </span>
-    </span>
-    <span class="col-span-8 col-start-2 mt-5 text-center">
-      temp range
+      range
       <span class="font-bold text-blue-600">
         <%= Map.get(@temp, "temp_min", "") %>
       </span>
       to
       <span class="font-bold text-blue-600">
         <%= Map.get(@temp, "temp_max", "") %>
+      </span>
+    </span>
+    <span class="col-span-8 col-start-2 mt-5 text-center">
+      <span class="font-semibold italic">
+        <%= Map.get(@weather, "description", "") %>
       </span>
     </span>
   <% end %>
