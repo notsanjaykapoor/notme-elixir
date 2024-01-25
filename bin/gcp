@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import http.client
 import json
 import subprocess
 import time
@@ -11,7 +12,11 @@ import dotenv
 dotenv.load_dotenv()
 
 
+DEFAULT_APP_CHECK_INTERVAL = 2
+DEFAULT_APP_CHECK_TIMEOUT = 20
+
 DEFAULT_BUILD_CHECK_INTERVAL = 20
+
 DEFAULT_SSH_CHECK_INTERVAL = 3
 DEFAULT_SSH_CHECK_TIMEOUT = 15
 
@@ -40,23 +45,24 @@ def build(ctx, project: str, sha: str):
 @click.option("--user", default="", required=False, help="gcp ssh username")
 @click.pass_context
 def deploy(ctx, host: str, user: str):
+
     time_start_unix = time.time()
 
     print("host reboot", end=" ... ")
 
-    code = _ssh_reboot(host=host, user=user)
+    code = _host_reboot(host=host, user=user)
 
     _print_ok("ok")
 
-    print("host wait")
+    print("host reboot wait", end=" ... ")
     time.sleep(3)
+    _print_ok("ok")
 
-    # wait for host
-    print("host check", end=" ... ")
+    print("host check", end=" ... ", flush=True)
 
     timeout = 0
     while timeout < DEFAULT_SSH_CHECK_TIMEOUT:
-        code = _ssh_check(host=host, user=user)
+        code = _host_check(host=host, user=user)
         if code == 0:
             break
         time.sleep(DEFAULT_SSH_CHECK_INTERVAL)
@@ -64,9 +70,9 @@ def deploy(ctx, host: str, user: str):
 
     _print_ok(f"ok, {code}")
 
-    print("host scp files", end=" ... ")
+    print("host scp files", end=" ... ", flush=True)
 
-    code = _scp_files(host=host, user=user, files=[".env.db.prod", ".env.prod"])
+    code = _host_scp_files(host=host, user=user, files=[".env.db.prod", ".env.prod"])
 
     if code != 0:
         _print_error(f"error {code}")
@@ -74,7 +80,7 @@ def deploy(ctx, host: str, user: str):
 
     _print_ok("ok")
 
-    print("docker network", end=" ... ")
+    print("docker network", end=" ... ", flush=True)
 
     code = _docker_network_create(host=host, user=user)
 
@@ -84,7 +90,7 @@ def deploy(ctx, host: str, user: str):
 
     _print_ok("ok")
 
-    print("docker postgres", end=" ... ")
+    print("docker postgres start", end=" ... ", flush=True)
 
     code = _docker_postgres_start(host=host, user=user)
 
@@ -94,7 +100,7 @@ def deploy(ctx, host: str, user: str):
 
     _print_ok("ok")
 
-    print("docker migrate", end=" ... ")
+    print("docker postgres migrate", end=" ... ", flush=True)
 
     code = _docker_postgres_migrate(host=host, user=user)
 
@@ -104,7 +110,7 @@ def deploy(ctx, host: str, user: str):
 
     _print_ok("ok")
 
-    print("docker app", end=" ... ")
+    print("docker app start", end=" ... ", flush=True)
 
     code = _docker_app_start(host=host, user=user)
 
@@ -112,11 +118,39 @@ def deploy(ctx, host: str, user: str):
         _print_error(f"error {code}")
         exit(code)
 
+    _print_ok("ok")
+
+    print("docker app check", end=" ... ", flush=True)
+
+    timeout = 0
+    while timeout < DEFAULT_APP_CHECK_TIMEOUT:
+        try:
+            code = _docker_app_check(host=host, path="/me")
+            if code in [0, 200]:
+                break
+        except Exception:
+            pass
+        time.sleep(DEFAULT_APP_CHECK_INTERVAL)
+        timeout += DEFAULT_APP_CHECK_INTERVAL
+
+    if code not in [0, 200]:
+        _print_error(f"error {code}")
+        exit(code)
+
+    _print_ok(f"code {code}")
+
     time_end_unix = time.time()
     time_mins = round((time_end_unix - time_start_unix) / 60, 1)
 
     _print_ok(f"ok, completed in {time_mins} mins")
 
+
+def _docker_app_check(host: str, path: str) -> int:
+    conn = http.client.HTTPConnection(host, 80)
+    conn.request("GET", path)
+    response = conn.getresponse()
+
+    return response.status
 
 def _docker_app_start(host: str, user: str) -> int:
     ssh_code = subprocess.run(
@@ -185,7 +219,25 @@ def _gcp_build_trigger(project: str, sha: str) -> str:
     return build_id
 
 
-def _scp_files(host: str, user: str, files: list[str]) -> int:
+def _host_check(host: str, user: str) -> int:
+    ssh_code = subprocess.run(
+        f"ssh -t {user}@{host} 'ls'",
+        shell=True,
+    ).returncode
+
+    return ssh_code
+
+
+def _host_reboot(host: str, user: str) -> int:
+    ssh_code = subprocess.run(
+        f"ssh -t {user}@{host} 'sudo reboot'",
+        shell=True,
+    ).returncode
+
+    return ssh_code
+
+
+def _host_scp_files(host: str, user: str, files: list[str]) -> int:
     for file in files:
         scp_code = subprocess.run(
             f"scp {file} {user}@{host}:{file}",
@@ -198,34 +250,16 @@ def _scp_files(host: str, user: str, files: list[str]) -> int:
     return 0
 
 
-def _ssh_check(host: str, user: str) -> int:
-    ssh_code = subprocess.run(
-        f"ssh -t {user}@{host} 'ls'",
-        shell=True,
-    ).returncode
-
-    return ssh_code
-
-
-def _ssh_reboot(host: str, user: str) -> int:
-    ssh_code = subprocess.run(
-        f"ssh -t {user}@{host} 'sudo reboot'",
-        shell=True,
-    ).returncode
-
-    return ssh_code
-
-
 def _print_error(s: str):
-    print("\x1b[1;31m" + s + "\x1b[0m")
+    print("\x1b[1;31m" + s + "\x1b[0m", flush=True)
 
 
 def _print_ok(s: str):
-    print("\x1b[1;32m" + s + "\x1b[0m")
+    print("\x1b[1;32m" + s + "\x1b[0m", flush=True)
 
 
 def _print_status(s: str):
-    print("\x1b[1;36m" + s + "\x1b[0m")
+    print("\x1b[1;36m" + s + "\x1b[0m", flush=True)
 
 
 
