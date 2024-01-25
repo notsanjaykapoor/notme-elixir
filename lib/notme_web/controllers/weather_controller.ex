@@ -16,8 +16,10 @@ defmodule NotmeWeb.WeatherController do
       {:ok, %Req.Response{status: 200, body: body} = _response} ->
         dbg(["ok", 200, body])
         name = Map.get(body, "name", "")
-        temp = Map.get(body, "main", {})
-        render(conn, :index, %{city: city, name: name, temp: temp})
+        temp = Map.get(body, "main")
+        weather_list = Map.get(body, "weather")
+        [weather | _] = weather_list
+        render(conn, :index, %{city: city, name: name, temp: temp, weather: weather})
       {:ok, %Req.Response{status: 400, body: body} = _response} ->
         dbg(["ok", "nothing", body])
         render(conn, :index, %{city: city, name: nil})
@@ -30,10 +32,6 @@ defmodule NotmeWeb.WeatherController do
       _ ->
         render(conn, :index, %{city: city, name: nil})
     end
-
-    # dbg(temp)
-
-    # render(conn, :index, %{city: city, temp_cur: temp_cur})
   end
 
   def create(conn, params) do

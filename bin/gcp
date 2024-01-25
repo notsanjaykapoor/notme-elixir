@@ -8,9 +8,7 @@ import time
 import click
 import dotenv
 
-
 dotenv.load_dotenv()
-
 
 DEFAULT_APP_CHECK_INTERVAL = 2
 DEFAULT_APP_CHECK_TIMEOUT = 20
@@ -20,9 +18,11 @@ DEFAULT_BUILD_CHECK_INTERVAL = 20
 DEFAULT_SSH_CHECK_INTERVAL = 3
 DEFAULT_SSH_CHECK_TIMEOUT = 15
 
+
 @click.group()
 def cli():
     pass
+
 
 @click.command()
 @click.option("--project", default=None, required=True, help="gcp project name")
@@ -32,10 +32,14 @@ def build(ctx, project: str, sha: str):
     time_start_unix = time.time()
 
     build_id = _gcp_build_trigger(project=project, sha=sha)
-    build_status = _gcp_build_poll(project=project, id=build_id)
+    build_status = _gcp_build_poll(project=project, id=build_id, states=["error", "success"])
 
     time_end_unix = time.time()
     time_mins = round((time_end_unix - time_start_unix) / 60, 1)
+
+    if build_status not in ["success"]:
+        _print_error(f"build {build_id} {build_status}, completed in {time_mins} mins")
+        exit(1)
 
     _print_ok(f"build {build_id} {build_status}, completed in {time_mins} mins")
 
@@ -100,6 +104,10 @@ def deploy(ctx, host: str, user: str):
 
     _print_ok("ok")
 
+    print("docker postgres wait", end=" ... ", flush=True)
+    time.sleep(10)
+    _print_ok("ok")
+
     print("docker postgres migrate", end=" ... ", flush=True)
 
     code = _docker_postgres_migrate(host=host, user=user)
@@ -145,12 +153,29 @@ def deploy(ctx, host: str, user: str):
     _print_ok(f"ok, completed in {time_mins} mins")
 
 
+@click.command()
+@click.option("--host", default=None, required=True, help="gcp host or ip address")
+@click.option("--user", default="", required=False, help="gcp ssh username")
+@click.pass_context
+def migrate(ctx, host: str, user: str):
+    print("docker postgres migrate", end=" ... ", flush=True)
+
+    code = _docker_postgres_migrate(host=host, user=user)
+
+    if code not in [0]:
+        _print_error(f"error {code}")
+        exit(code)
+
+    _print_ok("ok")
+
+
 def _docker_app_check(host: str, path: str) -> int:
     conn = http.client.HTTPConnection(host, 80)
     conn.request("GET", path)
     response = conn.getresponse()
 
     return response.status
+
 
 def _docker_app_start(host: str, user: str) -> int:
     ssh_code = subprocess.run(
@@ -163,7 +188,7 @@ def _docker_app_start(host: str, user: str) -> int:
 
 def _docker_postgres_migrate(host: str, user: str) -> int:
     ssh_code = subprocess.run(
-        f"ssh -t {user}@{host} 'docker run --network notme -d --rm --env-file .env.prod gcr.io/notme-330419/notme-elixir:latest /app/bin/migrate'",
+        f"ssh -t {user}@{host} 'docker run --network notme --env-file .env.prod gcr.io/notme-330419/notme-elixir:latest /app/bin/migrate'",
         shell=True,
     ).returncode
 
@@ -188,7 +213,7 @@ def _docker_network_create(host: str, user: str) -> int:
     return ssh_code
 
 
-def _gcp_build_poll(project: str, id: str) -> str:
+def _gcp_build_poll(project: str, id: str, states: list[str]) -> str:
     cmd = f"gcloud builds describe {id} --format=json"
     
     while True:
@@ -199,7 +224,7 @@ def _gcp_build_poll(project: str, id: str) -> str:
         _print_status(f"gcp build id {id} - status {build_status} ...")
 
         # check for terminal state
-        if build_status in ["error", "success"]:
+        if build_status in states:
             return build_status
 
         time.sleep(DEFAULT_BUILD_CHECK_INTERVAL)
@@ -262,9 +287,9 @@ def _print_status(s: str):
     print("\x1b[1;36m" + s + "\x1b[0m", flush=True)
 
 
-
 cli.add_command(build)
 cli.add_command(deploy)
+cli.add_command(migrate)
 
 if __name__ == "__main__":
     cli()
