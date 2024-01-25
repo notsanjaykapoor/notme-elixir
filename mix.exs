@@ -65,6 +65,7 @@ defmodule Notme.MixProject do
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_api, "~> 1.2"},
       {:opentelemetry_phoenix, "~> 1.0"},
+      {:req, "~> 0.4.0"},
     ]
   end
 

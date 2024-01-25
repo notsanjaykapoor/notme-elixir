@@ -17,6 +17,9 @@ config :notme, :auth, env!("NOTME_AUTH", :string, "")
 config :notme, :home, env!("NOTME_HOME", :string, "me")
 config :notme, :version, env!("NOTME_VERSION", :string, "prd")
 
+config :notme, :weather_token, env!("OPENWEATHER_API_TOKEN", :string, "")
+config :notme, :weather_uri, env!("OPENWEATHER_API_URI", :string, "")
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server

@@ -49,6 +49,7 @@ defmodule NotmeWeb.Router do
     resources "/options", OptionController, only: [:index]
     resources "/products", ProductController
     resources "/users", UserController, only: [:index]
+    resources "/weather", WeatherController, only: [:index]
 
     get "/", PageController, :home
   end
