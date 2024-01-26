@@ -1,13 +1,14 @@
 defmodule Notme.Model.MerchantSearch do
 
-  alias Notme.Model.{Merchant, Search}
+  alias Notme.Model
   alias Notme.Repo
+  alias Notme.Search
 
   import Ecto.Query
 
   @spec search(String.t, integer, integer) :: Enum.Merchant
   def search(search_query, limit_, offset_) do
-    {:ok, clauses} = Search.search_clauses(search_query)
+    {:ok, clauses} = Search.Base.search_clauses(search_query)
 
     _query_base()
     |> _query_build(clauses)
@@ -19,7 +20,7 @@ defmodule Notme.Model.MerchantSearch do
 
   @spec _query_base() :: Ecto.Query.t()
   def _query_base() do
-    from o in Merchant
+    from o in  Model.Merchant
   end
 
   @spec _query_build(Ecto.Query.t(), list) :: Ecto.Query.t()

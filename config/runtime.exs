@@ -158,5 +158,5 @@ config :notme, :redpanda_host, env!("REDPANDA_HOST", :string)
 config :notme, :redpanda_port, env!("REDPANDA_PORT", :integer)
 config :notme, :redpanda_group, env!("REDPANDA_GROUP", :string)
 
-config :notme, :redpanda_topic_inventory, "pipe-inventory-dev"
-config :notme, :redpanda_topic_simple, "pipe-simple-dev"
+config :notme, :redpanda_topic_inventory, env!("REDPANDA_TOPIC_INVENTORY", :string)
+config :notme, :redpanda_topic_simple, env!("REDPANDA_TOPIC_SIMPLE", :string)

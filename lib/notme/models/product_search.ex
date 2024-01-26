@@ -3,14 +3,14 @@ defmodule Notme.Model.ProductSearch do
   The ProductSearch context.
   """
 
-  alias Notme.Model.Product
-  alias Notme.Model.Search
+  alias Notme.Model
   alias Notme.Repo
+  alias Notme.Search
 
   import Ecto.Query
 
   def search(search_query, limit_, offset_) do
-    {:ok, clauses} = Search.search_clauses(search_query)
+    {:ok, clauses} = Search.Base.search_clauses(search_query)
 
     _query_base()
     |> _query_build(clauses)
@@ -22,7 +22,7 @@ defmodule Notme.Model.ProductSearch do
 
   @spec _query_base() :: Ecto.Query.t()
   def _query_base() do
-    from o in Product
+    from o in Model.Product
   end
 
   def _query_build(query, clauses) do

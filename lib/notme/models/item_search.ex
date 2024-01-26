@@ -3,12 +3,13 @@ defmodule Notme.Model.ItemSearch do
   The ItemSearch context.
   """
 
-  alias Notme.Model.{Item, Search, SearchPage}
+  alias Notme.Model
   alias Notme.Repo
+  alias Notme.Search
 
   import Ecto.Query
 
-  @spec search(binary, number, number) :: %Notme.Model.SearchPage{
+  @spec search(binary, number, number) :: %Search.Page{
           count: non_neg_integer,
           limit: number,
           objects: list,
@@ -18,7 +19,7 @@ defmodule Notme.Model.ItemSearch do
           total: any
         }
   def search(search_query, limit_, offset_) do
-    {:ok, clauses} = Search.search_clauses(search_query)
+    {:ok, clauses} = Search.Base.search_clauses(search_query)
 
     query = _query_base()
     |> _query_build(clauses)
@@ -33,7 +34,7 @@ defmodule Notme.Model.ItemSearch do
     |> _query_count()
     |> Repo.one
 
-    %SearchPage{
+    %Search.Page{
       count: length(items),
       limit: limit_,
       objects: items,
@@ -62,7 +63,7 @@ defmodule Notme.Model.ItemSearch do
 
   @spec _query_base() :: Ecto.Query.t()
   def _query_base() do
-    from o in Item
+    from o in Model.Item
   end
 
   @spec _query_build(Ecto.Query.t(), list) :: Ecto.Query.t()

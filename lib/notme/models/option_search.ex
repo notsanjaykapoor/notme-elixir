@@ -3,14 +3,14 @@ defmodule Notme.Model.OptionSearch do
   The Catalog OptionSearch context.
   """
 
-  alias Notme.Model.Option
-  alias Notme.Model.Search
+  alias Notme.Model
   alias Notme.Repo
+  alias Notme.Search
 
   import Ecto.Query
 
   def search(search_query, limit_, offset_) do
-    {:ok, clauses} = Search.search_clauses(search_query)
+    {:ok, clauses} = Search.Base.search_clauses(search_query)
 
     _query_base()
     |> _query_build(clauses)
@@ -21,7 +21,7 @@ defmodule Notme.Model.OptionSearch do
   end
 
   def _query_base() do
-    from o in Option
+    from o in Model.Option
   end
 
   def _query_build(query, clauses) do

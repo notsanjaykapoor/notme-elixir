@@ -1,4 +1,4 @@
-defmodule Notme.Model.Search do
+defmodule Notme.Search.Base do
 
   @spec search_clauses(String.t) :: {:ok, list}
   def search_clauses(search_query) do
