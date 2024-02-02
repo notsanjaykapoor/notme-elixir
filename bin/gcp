@@ -18,6 +18,7 @@ DEFAULT_BUILD_CHECK_INTERVAL = 20
 DEFAULT_SSH_CHECK_INTERVAL = 3
 DEFAULT_SSH_CHECK_TIMEOUT = 15
 
+GCP_REPO = "gcr.io/notme-330419/notme-elixir"
 
 @click.group()
 def cli():
@@ -67,7 +68,7 @@ def deploy(ctx, host: str, user: str, site: str):
 
     print(f"host {host} scp files", end=" ... ", flush=True)
 
-    _host_scp_files(host=host, user=user, files=[".env.db.prod", ".env.prod"])
+    _host_scp_files(host=host, user=user, dir="elixir", files=[".env.db.prod", ".env.prod"])
 
     _print_ok("ok")
 
@@ -92,9 +93,9 @@ def deploy(ctx, host: str, user: str, site: str):
     time.sleep(10)
     _print_ok("ok")
 
-    print(f"host {host} docker postgres migrate", end=" ... ", flush=True)
+    print(f"host {host} docker app db migrate", end=" ... ", flush=True)
 
-    _docker_postgres_migrate(host=host, user=user)
+    _docker_app_db_migrate(host=host, user=user)
 
     _print_ok("ok")
 
@@ -135,9 +136,23 @@ def deploy(ctx, host: str, user: str, site: str):
     _print_ok(f"host {host} deploy completed in {time_secs} secs")
 
 
+def _docker_app_db_migrate(host: str, user: str) -> int:
+    response = subprocess.run(
+        f"ssh -t {user}@{host} 'sudo docker run --name elixir-migrate-prd --network notme --rm --env-file ./elixir/.env.prod {GCP_REPO}:latest /app/bin/migrate'",
+        shell=True,
+        capture_output=True,
+    )
+
+    if response.returncode not in [0]:
+        _print_error(response.stdout.decode("utf-8"))
+        exit(response.returncode)
+
+    return response.returncode
+
+
 def _docker_app_pull(host: str, user: str) -> int:
     response = subprocess.run(
-        f"ssh -t {user}@{host} 'sudo docker image pull gcr.io/notme-330419/notme-elixir:latest'",
+        f"ssh -t {user}@{host} 'sudo docker image pull {GCP_REPO}:latest'",
         shell=True,
         capture_output=True,
     )
@@ -150,22 +165,25 @@ def _docker_app_pull(host: str, user: str) -> int:
 
 
 def _docker_app_restart(host: str, user: str) -> int:
-    response = subprocess.run(
-        f"ssh -t {user}@{host} 'sudo docker stop notme-elixir-prd'",
-        shell=True,
-        capture_output=True,
-    )
+    apps = ["elixir-migrate-prd", "elixir-prd"]
 
-    if response.returncode not in [0, 1]: # 1 means container not running
-        _print_error(response.stdout.decode("utf-8"))
-        exit(response.returncode)
+    for app in apps:
+        response = subprocess.run(
+            f"ssh -t {user}@{host} 'sudo docker stop {app}'",
+            shell=True,
+            capture_output=True,
+        )
+
+        if response.returncode not in [0, 1]: # 1 means container not running
+            _print_error(response.stdout.decode("utf-8"))
+            exit(response.returncode)
 
     return _docker_app_start(host=host, user=user)
 
 
 def _docker_app_start(host: str, user: str) -> int:
     response = subprocess.run(
-        f"ssh -t {user}@{host} 'sudo docker run --name notme-elixir-prd --network notme -d --rm -p 4000:4000 --env-file .env.prod gcr.io/notme-330419/notme-elixir:latest'",
+        f"ssh -t {user}@{host} 'sudo docker run --name elixir-prd --network notme -d --rm -p 4000:4000 --env-file ./elixir/.env.prod {GCP_REPO}:latest'",
         shell=True,
         capture_output=True,
     )
@@ -205,23 +223,9 @@ def _docker_network_create(host: str, user: str) -> int:
     return response.returncode
 
 
-def _docker_postgres_migrate(host: str, user: str) -> int:
-    response = subprocess.run(
-        f"ssh -t {user}@{host} 'sudo docker run --network notme --env-file .env.prod gcr.io/notme-330419/notme-elixir:latest /app/bin/migrate'",
-        shell=True,
-        capture_output=True,
-    )
-
-    if response.returncode not in [0]:
-        _print_error(response.stdout.decode("utf-8"))
-        exit(response.returncode)
-
-    return response.returncode
-
-
 def _docker_postgres_start(host: str, user: str) -> int:
     response = subprocess.run(
-        f"ssh -t {user}@{host} 'sudo docker run --name postgres-prd --network notme -d --rm --env-file .env.db.prod postgis/postgis:16-3.4'",
+        f"ssh -t {user}@{host} 'sudo docker run --name postgres-prd --network notme -d --rm --env-file ./elixir/.env.db.prod postgis/postgis:16-3.4'",
         shell=True,
         capture_output=True,
     )
@@ -283,10 +287,19 @@ def _host_reboot(host: str, user: str) -> int:
     return ssh_code
 
 
-def _host_scp_files(host: str, user: str, files: list[str]) -> int:
+def _host_scp_files(host: str, user: str, dir: str, files: list[str]) -> int:
+    scp_code = subprocess.run(
+        f"ssh -t {user}@{host} 'mkdir -p {dir}'",
+        shell=True,
+        capture_output=True,
+    ).returncode
+
+    if scp_code not in [0]:
+        exit(scp_code)
+
     for file in files:
         scp_code = subprocess.run(
-            f"scp {file} {user}@{host}:{file}",
+            f"scp {file} {user}@{host}:{dir}/{file}",
             shell=True,
             capture_output=True,
         ).returncode

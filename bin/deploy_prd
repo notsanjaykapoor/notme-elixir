@@ -1,5 +1,7 @@
 #! /bin/sh
 
+# deprecated
+
 usage()
 {
   echo "Usage: $0 [-a host-or-ip-address] [-u user] [-r] [-d]"
